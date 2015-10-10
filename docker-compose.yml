@@ -1,0 +1,13 @@
+frontapp:
+  build: .
+  ports:
+   - "80:80"
+  volumes:
+   - .:/data/frontapp
+  links:
+   - elasticsearch
+elasticsearch:
+  image: elasticsearch
+  ports:
+   - "9200:9200"
+   - "9300:9300"
