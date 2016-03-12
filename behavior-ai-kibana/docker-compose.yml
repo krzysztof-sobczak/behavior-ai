@@ -1,0 +1,6 @@
+kibana:
+  build: .
+  ports:
+    - 5601:5601
+  external_links:
+    - behavioraistorage_elasticsearch_1:elasticsearch

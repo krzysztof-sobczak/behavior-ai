@@ -1,0 +1,3 @@
+INBOX (.*)/inbox.php
+PRODUCT (.*)/product/
+API_ME /api/me
