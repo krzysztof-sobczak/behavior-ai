@@ -1,15 +1,7 @@
-#frontapp:
-#  build: .
-#  ports:
-#   - "80:80"
-#  volumes:
-#   - .:/data/frontapp
-#  links:
-#   - elasticsearch
-
 elasticsearch:
   image: elasticsearch
   volumes:
+    - ./elasticsearch/config:/usr/share/elasticsearch/config
     - ./elasticsearch/plugins:/usr/share/elasticsearch/plugins
   ports:
     - 9200:9200
