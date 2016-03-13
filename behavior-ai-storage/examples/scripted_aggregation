@@ -6,10 +6,22 @@ GET /logstash-2015.06.03/_search
   "aggs": {
     "profit": {
       "scripted_metric": {
-        "init_script": "_agg['transactions'] = []",
-        "map_script": "if (doc['path_category.raw'].value == \"INBOX\") { _agg.transactions.add(doc['clientip.raw'].value) }",
-        "combine_script": "return _agg",
-        "reduce_script": "ips = []; for (a in _aggs) { for (t in a.transactions) { ips.add(t) } }; return ips"
+        "init_script": {
+          "lang": "groovy",
+          "file": "psa-clustering_init"
+        },
+        "map_script": {
+          "lang": "groovy",
+          "file": "psa-clustering_map"
+        },
+        "combine_script": {
+          "lang": "groovy",
+          "file": "psa-clustering_combine"
+        },
+        "reduce_script": {
+          "lang": "groovy",
+          "file": "psa-clustering_reduce"
+        }
       }
     }
   }
