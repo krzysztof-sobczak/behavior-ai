@@ -1,1 +1,1 @@
-return _agg.sequence
+return _agg.users

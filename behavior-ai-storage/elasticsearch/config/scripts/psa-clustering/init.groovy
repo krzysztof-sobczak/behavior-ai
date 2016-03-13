@@ -1,1 +1,1 @@
-_agg.sequence = []
+_agg.users = [];
