@@ -1,1 +1,1 @@
-_agg['transactions'] = []
+_agg.sequence = []

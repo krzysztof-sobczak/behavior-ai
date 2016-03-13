@@ -1,1 +1,1 @@
-return _agg
+return _agg.sequence

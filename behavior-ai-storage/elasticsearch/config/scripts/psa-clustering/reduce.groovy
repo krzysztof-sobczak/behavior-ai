@@ -1,6 +1,3 @@
-ips = [];
-for (a in _aggs) {
-    for (t in a.transactions) {
-        ips.add(t)
-    }
-}; return ips
+sequence = []; for (a in _aggs) {
+    sequence = sequence + a
+}; return sequence;

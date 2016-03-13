@@ -1,26 +1,42 @@
 GET /logstash-2015.06.03/_search
 {
+  "size": 0,
   "query": {
     "match_all": {}
   },
   "aggs": {
-    "profit": {
-      "scripted_metric": {
-        "init_script": {
-          "lang": "groovy",
-          "file": "psa-clustering_init"
-        },
-        "map_script": {
-          "lang": "groovy",
-          "file": "psa-clustering_map"
-        },
-        "combine_script": {
-          "lang": "groovy",
-          "file": "psa-clustering_combine"
-        },
-        "reduce_script": {
-          "lang": "groovy",
-          "file": "psa-clustering_reduce"
+    "ip": {
+      "terms": {
+        "script" : "doc['clientip.raw'].value+doc['agent.raw'].value"
+      },
+      "aggs": {
+        "timed_session": {
+          "date_histogram": {
+            "field": "timestamp",
+            "interval": "15m"
+          },
+          "aggs": {
+            "sequence": {
+              "scripted_metric": {
+                "init_script": {
+                  "lang": "groovy",
+                  "inline": "_agg.sequence = []"
+                },
+                "map_script": {
+                  "lang": "groovy",
+                  "inline": "_agg.sequence.add(doc['path_category.raw'].value)"
+                },
+                "combine_script": {
+                  "lang": "groovy",
+                  "inline": "return _agg.sequence"
+                },
+                "reduce_script": {
+                  "lang": "groovy",
+                  "inline": "sequence = []; for (a in _aggs) { sequence = sequence + a }; return sequence;"
+                }
+              }
+            }
+          }
         }
       }
     }
