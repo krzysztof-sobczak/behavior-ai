@@ -159,9 +159,13 @@ def mergeClosestClusters = {HashMap<String, HashMap<String, String>> _clusters, 
             }
         }
     }
-
 //    println(merge)
 //    println(mergeDistance)
+    if(mergeDistance < -50) {
+        return false
+    }
+
+    // perform cluster merging
 
     for(user in clusters[merge[1]]) {
         clusters[merge[0]].add(user)
@@ -181,11 +185,10 @@ def mergeClosestClusters = {HashMap<String, HashMap<String, String>> _clusters, 
         d.value.remove(merge[1])
     }
     distances.remove(merge[1])
-
+    return true
 }
 
-while (clusters.size() > 3 ) {
-    mergeClosestClusters(clusters, distances)
+while (mergeClosestClusters(clusters, distances)) {
     println(clusters)
     println(distances)
 }
@@ -195,11 +198,13 @@ while (clusters.size() > 3 ) {
 // in distance matrix of cluster we sum-up each row
 // and find user with minimal value
 
-resultClusters = []
+result = [clusters: [], clusters_count: clusters.size(), clusters_users_count: 0]
 for(cluster in clusters) {
-    resultClusters.add([size: cluster.value.size(), representants: [
+    clusterSize = cluster.value.size()
+    result.clusters.add([size: clusterSize, representants: [
             cluster.value[0]]
     ]);
+    result.clusters_users_count += clusterSize
 }
 
-return resultClusters;
+return result;
