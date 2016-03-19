@@ -71,7 +71,7 @@ def calculate_sequences_score_psa = { ArrayList sequence1, ArrayList sequence2 -
     }
 //    println(psaTable)
 
-    def calculate_move_value = { ArrayList seq1, ArrayList seq2, ArrayList<ArrayList<Integer>> psaTable, ArrayList<Integer> pointer, boolean semiglobalMode ->
+    def calculate_move_value = { ArrayList seq1, ArrayList seq2, ArrayList<ArrayList<Integer>> psaTable, ArrayList<Integer> pointer, Boolean semiglobalMode ->
         pointerX = pointer[0]
         pointerY = pointer[1]
         colCount = psaTable[0].size()
@@ -143,7 +143,6 @@ for (user1 in users) {
 println(distances)
 
 // perform hierarchical clustering using distance matrix
-clusters = [];
 
 merge = []
 mergeDistance = -99999
@@ -166,6 +165,7 @@ println(mergeDistance)
 // in distance matrix of cluster we sum-up each row
 // and find user with minimal value
 
+clusters = [];
 // mocked clusters
 clusters.add([size: 20, representant: users[0]]);
 clusters.add([size: 12, representant: users[1]]);
