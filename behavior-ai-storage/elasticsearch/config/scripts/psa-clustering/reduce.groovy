@@ -1,38 +1,38 @@
 // make one list of user sessions
-//users = []; for (a in _aggs) {
-//    users = users + a
-//};
+users = []; for (a in _aggs) {
+    users = users + a
+};
 
-users = [
-        [
-                id  : "AS1",
-                path: ["INBOX", "API_ME", "INBOX", "INBOX", "API_ME", "API_ME"]
-        ],
-        [
-                id  : "AS2",
-                path: ["INBOX", "API_ME", "INBOX", "API_ME", "PRODUCT", "INBOX"]
-        ],
-        [
-                id  : "AS3",
-                path: ["PRODUCT", "API_ME", "PRODUCT", "INBOX", "PRODUCT", "API_ME", "PRODUCT", "INBOX"]
-        ],
-        [
-                id  : "AS4",
-                path: ["INBOX", "API_ME", "API_ME", "INBOX", "API_ME", "API_ME"]
-        ],
-        [
-                id  : "AS5",
-                path: ["INBOX", "API_ME", "PRODUCT", "INBOX", "PRODUCT", "INBOX", "PRODUCT", "INBOX"]
-        ],
-        [
-                id  : "AS6",
-                path: ["INBOX", "API_ME", "INBOX", "API_ME"]
-        ],
-        [
-                id  : "AS7",
-                path: ["PRODUCT", "API_ME", "INBOX", "INBOX"]
-        ]
-]
+//users = [
+//        [
+//                id  : "AS1",
+//                path: ["INBOX", "API_ME", "INBOX", "INBOX", "API_ME", "API_ME"]
+//        ],
+//        [
+//                id  : "AS3",
+//                path: ["PRODUCT", "API_ME", "PRODUCT", "INBOX", "PRODUCT", "API_ME", "PRODUCT", "INBOX"]
+//        ],
+//        [
+//                id  : "AS4",
+//                path: ["INBOX", "API_ME", "API_ME", "INBOX", "API_ME", "API_ME"]
+//        ],
+//        [
+//                id  : "AS2",
+//                path: ["INBOX", "API_ME", "INBOX", "API_ME", "PRODUCT", "INBOX"]
+//        ],
+//        [
+//                id  : "AS5",
+//                path: ["INBOX", "API_ME", "PRODUCT", "INBOX", "PRODUCT", "INBOX", "PRODUCT", "INBOX"]
+//        ],
+//        [
+//                id  : "AS6",
+//                path: ["INBOX", "API_ME", "INBOX", "API_ME"]
+//        ],
+//        [
+//                id  : "AS7",
+//                path: ["PRODUCT", "API_ME", "INBOX", "INBOX"]
+//        ]
+//]
 
 // create distance matrix
 // using PSA algorithm on user.path
@@ -140,34 +140,66 @@ for (user1 in users) {
     }
 }
 
-println(distances)
-
 // perform hierarchical clustering using distance matrix
+HashMap<String, HashMap<String, String>> clusters = new HashMap<>()
+for(u in users) {
+    clusters[u.id] = [u]
+}
 
-merge = []
-mergeDistance = -99999
-for(c1 in distances) {
-    for (c2 in distances) {
-        distance = distances[c1.key][c2.key]
-        if(distance != 1 && distance > mergeDistance)
-        {
-            merge = [c1.key, c2.key]
-            mergeDistance = distance
+def mergeClosestClusters = {HashMap<String, HashMap<String, String>> _clusters, HashMap<String, HashMap<String, Integer>> _distances ->
+    merge = []
+    mergeDistance = -99999
+    for(c1 in distances) {
+        for (c2 in distances) {
+            distance = distances[c1.key][c2.key]
+            if(distance != 1 && distance > mergeDistance)
+            {
+                merge = [c1.key, c2.key]
+                mergeDistance = distance
+            }
         }
     }
+
+//    println(merge)
+//    println(mergeDistance)
+
+    for(user in clusters[merge[1]]) {
+        clusters[merge[0]].add(user)
+    }
+    clusters.remove(merge[1])
+//    println(clusters)
+
+    for(d in distances[merge[0]])
+    {
+//        println(d.key+": comparing "+d.value+" and "+distances[merge[1]][d.key])
+        max = Math.max(d.value, distances[merge[1]][d.key])
+        d.setValue(max)
+        distances[d.key][merge[0]] = max
+    }
+    for(d in distances)
+    {
+        d.value.remove(merge[1])
+    }
+    distances.remove(merge[1])
+
 }
-println(merge)
-println(mergeDistance)
-//TODO: perform cluster merging
+
+while (clusters.size() > 3 ) {
+    mergeClosestClusters(clusters, distances)
+    println(clusters)
+    println(distances)
+}
 
 // find cluster representants
 // representant is a centroid of cluster
 // in distance matrix of cluster we sum-up each row
 // and find user with minimal value
 
-clusters = [];
-// mocked clusters
-clusters.add([size: 20, representant: users[0]]);
-clusters.add([size: 12, representant: users[1]]);
-clusters.add([size: 7, representant: users[2]]);
-return clusters;
+resultClusters = []
+for(cluster in clusters) {
+    resultClusters.add([size: cluster.value.size(), representants: [
+            cluster.value[0]]
+    ]);
+}
+
+return resultClusters;
