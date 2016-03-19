@@ -1,38 +1,40 @@
+if (!binding.variables.containsKey('_aggs')) {
+    _aggs = [
+            [
+                    id  : "AS1",
+                    path: ["INBOX", "API_ME", "INBOX", "INBOX", "API_ME", "API_ME"]
+            ],
+            [
+                    id  : "AS3",
+                    path: ["PRODUCT", "API_ME", "PRODUCT", "INBOX", "PRODUCT", "API_ME", "PRODUCT", "INBOX"]
+            ],
+            [
+                    id  : "AS4",
+                    path: ["INBOX", "API_ME", "API_ME", "INBOX", "API_ME", "API_ME"]
+            ],
+            [
+                    id  : "AS2",
+                    path: ["INBOX", "API_ME", "INBOX", "API_ME", "PRODUCT", "INBOX"]
+            ],
+            [
+                    id  : "AS5",
+                    path: ["INBOX", "API_ME", "PRODUCT", "INBOX", "PRODUCT", "INBOX", "PRODUCT", "INBOX"]
+            ],
+            [
+                    id  : "AS6",
+                    path: ["INBOX", "API_ME", "INBOX", "API_ME"]
+            ],
+            [
+                    id  : "AS7",
+                    path: ["PRODUCT", "API_ME", "INBOX", "INBOX"]
+            ]
+    ]
+}
+
 // make one list of user sessions
 users = []; for (a in _aggs) {
     users = users + a
 };
-
-//users = [
-//        [
-//                id  : "AS1",
-//                path: ["INBOX", "API_ME", "INBOX", "INBOX", "API_ME", "API_ME"]
-//        ],
-//        [
-//                id  : "AS3",
-//                path: ["PRODUCT", "API_ME", "PRODUCT", "INBOX", "PRODUCT", "API_ME", "PRODUCT", "INBOX"]
-//        ],
-//        [
-//                id  : "AS4",
-//                path: ["INBOX", "API_ME", "API_ME", "INBOX", "API_ME", "API_ME"]
-//        ],
-//        [
-//                id  : "AS2",
-//                path: ["INBOX", "API_ME", "INBOX", "API_ME", "PRODUCT", "INBOX"]
-//        ],
-//        [
-//                id  : "AS5",
-//                path: ["INBOX", "API_ME", "PRODUCT", "INBOX", "PRODUCT", "INBOX", "PRODUCT", "INBOX"]
-//        ],
-//        [
-//                id  : "AS6",
-//                path: ["INBOX", "API_ME", "INBOX", "API_ME"]
-//        ],
-//        [
-//                id  : "AS7",
-//                path: ["PRODUCT", "API_ME", "INBOX", "INBOX"]
-//        ]
-//]
 
 // create distance matrix
 // using PSA algorithm on user.path
@@ -142,18 +144,17 @@ for (user1 in users) {
 
 // perform hierarchical clustering using distance matrix
 HashMap<String, HashMap<String, String>> clusters = new HashMap<>()
-for(u in users) {
+for (u in users) {
     clusters[u.id] = [u]
 }
 
-def mergeClosestClusters = {HashMap<String, HashMap<String, String>> _clusters, HashMap<String, HashMap<String, Integer>> _distances ->
+def mergeClosestClusters = { HashMap<String, HashMap<String, String>> _clusters, HashMap<String, HashMap<String, Integer>> _distances ->
     merge = []
     mergeDistance = -99999
-    for(c1 in distances) {
+    for (c1 in distances) {
         for (c2 in distances) {
             distance = distances[c1.key][c2.key]
-            if(distance != 1 && distance > mergeDistance)
-            {
+            if (distance != 1 && distance > mergeDistance) {
                 merge = [c1.key, c2.key]
                 mergeDistance = distance
             }
@@ -161,27 +162,25 @@ def mergeClosestClusters = {HashMap<String, HashMap<String, String>> _clusters, 
     }
 //    println(merge)
 //    println(mergeDistance)
-    if(mergeDistance < -50) {
+    if (mergeDistance < -50) {
         return false
     }
 
     // perform cluster merging
 
-    for(user in clusters[merge[1]]) {
+    for (user in clusters[merge[1]]) {
         clusters[merge[0]].add(user)
     }
     clusters.remove(merge[1])
 //    println(clusters)
 
-    for(d in distances[merge[0]])
-    {
+    for (d in distances[merge[0]]) {
 //        println(d.key+": comparing "+d.value+" and "+distances[merge[1]][d.key])
         max = Math.max(d.value, distances[merge[1]][d.key])
         d.setValue(max)
         distances[d.key][merge[0]] = max
     }
-    for(d in distances)
-    {
+    for (d in distances) {
         d.value.remove(merge[1])
     }
     distances.remove(merge[1])
@@ -189,8 +188,8 @@ def mergeClosestClusters = {HashMap<String, HashMap<String, String>> _clusters, 
 }
 
 while (mergeClosestClusters(clusters, distances)) {
-    println(clusters)
-    println(distances)
+//    println(clusters)
+//    println(distances)
 }
 
 // find cluster representants
@@ -199,12 +198,14 @@ while (mergeClosestClusters(clusters, distances)) {
 // and find user with minimal value
 
 result = [clusters: [], clusters_count: clusters.size(), clusters_users_count: 0]
-for(cluster in clusters) {
+for (cluster in clusters) {
     clusterSize = cluster.value.size()
     result.clusters.add([size: clusterSize, representants: [
             cluster.value[0]]
     ]);
     result.clusters_users_count += clusterSize
 }
+
+//println(result)
 
 return result;
