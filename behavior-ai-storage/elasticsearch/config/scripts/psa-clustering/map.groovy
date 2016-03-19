@@ -1,5 +1,7 @@
+String id = doc['clientip.raw'].value + doc['agent.raw'].value
+id = id.bytes.encodeBase64().toString()
 userVisit = [
-        id: doc['clientip.raw'].value + doc['agent.raw'].value,
+        id:id,
         timestamp: doc['timestamp'].value,
         path: [doc['path_category.raw'].value]
 ];
