@@ -187,6 +187,7 @@ def mergeClosestClusters = { HashMap<String, HashMap<String, String>> _clusters,
     return true
 }
 
+// keep clustering until merge is possible
 while (mergeClosestClusters(clusters, distances)) {
 //    println(clusters)
 //    println(distances)

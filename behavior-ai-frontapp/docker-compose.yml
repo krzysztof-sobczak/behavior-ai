@@ -7,10 +7,10 @@
 #  links:
 #   - elasticsearch
 
-elasticsearch:
-  image: elasticsearch
-  volumes:
-    - ./elasticsearch/plugins:/usr/share/elasticsearch/plugins
-  ports:
-    - 9200:9200
-    - 9300:9300
+#elasticsearch:
+#  image: elasticsearch
+#  volumes:
+#    - ./elasticsearch/plugins:/usr/share/elasticsearch/plugins
+#  ports:
+#    - 9200:9200
+#    - 9300:9300
