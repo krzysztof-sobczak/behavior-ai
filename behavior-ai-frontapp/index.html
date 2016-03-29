@@ -39,14 +39,25 @@
             .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
 
-    d3.json("data.json", function(data) {
+    d3.json("data_parsed.json", function(data) {
         data.forEach(function(d) {
             d['clusters'].forEach(function(cluster) {
                 cluster[0] = new Date(cluster[0] * 1000);
+                cluster[1] = new Date(cluster[1] * 1000);
             });
         });
-        var xMin = d3.min(data[0]['clusters'], function(d){ return Math.min(d[0]); });
-        var xMax = d3.max(data[0]['clusters'], function(d){ return Math.max(d[0]); });
+        var xMin = d3.min(data, function(d){
+            return d3.min(d['clusters'], function(c){
+                return Math.min(c[0]);
+            });
+        });
+        var xMax = d3.max(data, function(d){
+            return d3.max(d['clusters'], function(c){
+                return Math.max(c[1]);
+            });
+        });
+        console.log(xMin);
+        console.log(xMax);
 
         var xScale = d3.time.scale()
                 .domain([xMin, xMax])
@@ -79,25 +90,25 @@
                     .append("text");
 
             var rScale = d3.scale.linear()
-                    .domain([0, d3.max(data[j]['clusters'], function(d) { return d[1]; })])
-                    .range([2, 9]);
+                    .domain([0, d3.max(data[j]['clusters'], function(d) { return d[2]; })])
+                    .range([2, 12]);
 
             circles
                     .attr("cx", function(d, i) { return xScale(d[0]); })
-                    .attr("cy", j*20+20)
-                    .attr("r", function(d) { return rScale(d[1]); })
+                    .attr("cy", j*30+20)
+                    .attr("r", function(d) { return rScale(d[2]); })
                     .style("fill", function(d) { return c(j); });
 
             text
-                    .attr("y", j*20+25)
+                    .attr("y", j*30+25)
                     .attr("x",function(d, i) { return xScale(d[0])-5; })
                     .attr("class","value")
-                    .text(function(d){ return d[1]; })
+                    .text(function(d){ return d[2]; })
                     .style("fill", function(d) { return c(j); })
                     .style("display","none");
 
             g.append("text")
-                    .attr("y", j*20+25)
+                    .attr("y", j*30+25)
                     .attr("x",width+20)
                     .attr("class","label")
                     .text(truncate(data[j]['name'],30,"..."))
