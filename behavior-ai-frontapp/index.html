@@ -2,6 +2,7 @@
 <html>
 <head>
     <script src="./jquery.min.js"></script>
+    <script src="./bower_components/elasticsearch/elasticsearch.js"></script>
     <script src="./scripts.js"></script>
     <style type="text/css">
         body{font-family: Arial, sans-serif;font-size:10px;}
@@ -24,6 +25,23 @@
         }
         return str;
     }
+
+    var client = elasticsearch.Client({
+        hosts: 'http://192.168.99.100:9200'
+    });
+
+    client.ping({
+        requestTimeout: 30000,
+
+        // undocumented params are appended to the query string
+        hello: "elasticsearch"
+    }, function (error) {
+        if (error) {
+            console.error('elasticsearch cluster is down!');
+        } else {
+            console.log('All is well');
+        }
+    });
 
     var margin = {top: 20, right: 200, bottom: 0, left: 20},
         width = 600,
