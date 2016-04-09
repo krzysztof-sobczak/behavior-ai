@@ -1,0 +1,515 @@
+{
+  "took": 10869,
+  "timed_out": false,
+  "_shards": {
+    "total": 5,
+    "successful": 5,
+    "failed": 0
+  },
+  "hits": {
+    "total": 2016,
+    "max_score": 0,
+    "hits": []
+  },
+  "aggregations": {
+    "timeframes": {
+      "buckets": [
+        {
+          "key_as_string": "2015-06-03T11:45:00.000Z",
+          "key": 1433331900000,
+          "doc_count": 708,
+          "behaviors": {
+            "value": {
+              "clusters": [
+                {
+                  "size": 2,
+                  "representants": [
+                    {
+                      "id": "MTY4LjE2OC40My4yNTAiTW96aWxsYS81LjAgKGNvbXBhdGlibGU7IE1TSUUgOS4wOyBBRDE7IFdpbmRvd3MgTlQgNi4xOyBXT1c2NDsgVHJpZGVudC81LjApIg==",
+                      "timestamp": 1433332188013,
+                      "path": [
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        "API_ME",
+                        null
+                      ],
+                      "pathHash": "bnVsbG51bGxudWxsbnVsbG51bGxBUElfTUVudWxs"
+                    }
+                  ]
+                },
+                {
+                  "size": 2,
+                  "representants": [
+                    {
+                      "id": "MjEyLjc1LjEwMC41OCJNb3ppbGxhLzUuMCAoV2luZG93cyBOVCA2LjM7IFdPVzY0KSBBcHBsZVdlYktpdC81MzcuMzYgKEtIVE1MLCBsaWtlIEdlY2tvKSBDaHJvbWUvNDMuMC4yMzU3LjgxIFNhZmFyaS81MzcuMzYi",
+                      "timestamp": 1433332189499,
+                      "path": [
+                        null,
+                        null
+                      ],
+                      "pathHash": "bnVsbG51bGw="
+                    }
+                  ]
+                },
+                {
+                  "size": 3,
+                  "representants": [
+                    {
+                      "id": "ODcuMjA0LjIzOC4yNDQiTW96aWxsYS81LjAgKFdpbmRvd3MgTlQgNi4zOyBXT1c2NDsgVHJpZGVudC83LjA7IHJ2OjExLjApIGxpa2UgR2Vja28i",
+                      "timestamp": 1433332194075,
+                      "path": [
+                        "INBOX",
+                        "INBOX",
+                        "INBOX",
+                        "INBOX",
+                        "INBOX",
+                        "INBOX",
+                        "INBOX",
+                        "INBOX",
+                        "INBOX",
+                        "INBOX",
+                        "INBOX"
+                      ],
+                      "pathHash": "SU5CT1hJTkJPWElOQk9YSU5CT1hJTkJPWElOQk9YSU5CT1hJTkJPWElOQk9YSU5CT1hJTkJPWA=="
+                    }
+                  ]
+                },
+                {
+                  "size": 4,
+                  "representants": [
+                    {
+                      "id": "OTUuMTYwLjE0LjM5Ik1vemlsbGEvNS4wIChXaW5kb3dzIE5UIDYuMTsgV09XNjQpIEFwcGxlV2ViS2l0LzUzNy4zNiAoS0hUTUwsIGxpa2UgR2Vja28pIENocm9tZS80My4wLjIzNTcuODEgU2FmYXJpLzUzNy4zNiI=",
+                      "timestamp": 1433332188781,
+                      "path": [
+                        "INBOX",
+                        "INBOX",
+                        "INBOX",
+                        "INBOX",
+                        "INBOX",
+                        "INBOX",
+                        "INBOX",
+                        "INBOX",
+                        "INBOX",
+                        "INBOX",
+                        "INBOX",
+                        "INBOX",
+                        "INBOX",
+                        "INBOX",
+                        "INBOX",
+                        "INBOX",
+                        "INBOX",
+                        "INBOX",
+                        "INBOX",
+                        "INBOX",
+                        "INBOX"
+                      ],
+                      "pathHash": "SU5CT1hJTkJPWElOQk9YSU5CT1hJTkJPWElOQk9YSU5CT1hJTkJPWElOQk9YSU5CT1hJTkJPWElOQk9YSU5CT1hJTkJPWElOQk9YSU5CT1hJTkJPWElOQk9YSU5CT1hJTkJPWElOQk9Y"
+                    }
+                  ]
+                },
+                {
+                  "size": 1,
+                  "representants": [
+                    {
+                      "id": "OTQuMjU0LjEzMy43OSJNb3ppbGxhLzUuMCAoTGludXg7IEFuZHJvaWQgNC40LjQ7IEM2NjAzIEJ1aWxkLzEwLjUuMS5BLjAuMjkyKSBBcHBsZVdlYktpdC81MzcuMzYgKEtIVE1MLCBsaWtlIEdlY2tvKSBDaHJvbWUvNDIuMC4yMzExLjExMSBNb2JpbGUgU2FmYXJpLzUzNy4zNiI=",
+                      "timestamp": 1433332179661,
+                      "path": [
+                        "PRODUCT",
+                        "PRODUCT",
+                        "API_ME",
+                        "PRODUCT",
+                        "API_ME"
+                      ],
+                      "pathHash": "UFJPRFVDVFBST0RVQ1RBUElfTUVQUk9EVUNUQVBJX01F"
+                    }
+                  ]
+                },
+                {
+                  "size": 2,
+                  "representants": [
+                    {
+                      "id": "NTAuMTEyLjk1LjIxMSJOZXdSZWxpY1Bpbmdlci8xLjAgKDQ1MDc3OSki",
+                      "timestamp": 1433332186492,
+                      "path": [
+                        null
+                      ],
+                      "pathHash": "bnVsbA=="
+                    }
+                  ]
+                },
+                {
+                  "size": 1,
+                  "representants": [
+                    {
+                      "id": "NjIuMTQxLjIwNi4xMCJNb3ppbGxhLzUuMCAoV2luZG93cyBOVCA1LjE7IHJ2OjM1LjApIEdlY2tvLzIwMTAwMTAxIEZpcmVmb3gvMzUuMCI=",
+                      "timestamp": 1433332185378,
+                      "path": [
+                        "INBOX",
+                        "INBOX",
+                        "INBOX"
+                      ],
+                      "pathHash": "SU5CT1hJTkJPWElOQk9Y"
+                    }
+                  ]
+                },
+                {
+                  "size": 1,
+                  "representants": [
+                    {
+                      "id": "MTc4LjIxNi45MS4xOTEiTW96aWxsYS81LjAgKFdpbmRvd3MgTlQgNi4zOyBXT1c2NCkgQXBwbGVXZWJLaXQvNTM3LjM2IChLSFRNTCwgbGlrZSBHZWNrbykgQ2hyb21lLzQzLjAuMjM1Ny44MSBTYWZhcmkvNTM3LjM2Ig==",
+                      "timestamp": 1433332179714,
+                      "path": [
+                        null,
+                        null,
+                        "API_ME"
+                      ],
+                      "pathHash": "bnVsbG51bGxBUElfTUU="
+                    }
+                  ]
+                },
+                {
+                  "size": 1,
+                  "representants": [
+                    {
+                      "id": "ODkuNzAuMjMzLjUyIk1vemlsbGEvNS4wIChXaW5kb3dzIE5UIDYuMzsgV09XNjQ7IFRyaWRlbnQvNy4wOyBNQVNNSlM7IHJ2OjExLjApIGxpa2UgR2Vja28i",
+                      "timestamp": 1433332179114,
+                      "path": [
+                        "API_ME"
+                      ],
+                      "pathHash": "QVBJX01F"
+                    }
+                  ]
+                }
+              ],
+              "clusters_count": 9,
+              "clusters_users_count": 17
+            }
+          }
+        },
+        {
+          "key_as_string": "2015-06-03T11:50:00.000Z",
+          "key": 1433332200000,
+          "doc_count": 1308,
+          "behaviors": {
+            "value": {
+              "clusters": [
+                {
+                  "size": 3,
+                  "representants": [
+                    {
+                      "id": "NTQuMTc5LjQ2LjI1NCJNb3ppbGxhLzUuMCAoWDExOyBMaW51eCB4ODZfNjQpIEFwcGxlV2ViS2l0LzUzNy4zNiAoS0hUTUwsIGxpa2UgR2Vja28pIENocm9tZS8zNi4wLjE5ODUuNjcgU2FmYXJpLzUzNy4zNiI=",
+                      "timestamp": 1433332205075,
+                      "path": [
+                        null
+                      ],
+                      "pathHash": "bnVsbA=="
+                    }
+                  ]
+                },
+                {
+                  "size": 2,
+                  "representants": [
+                    {
+                      "id": "NTQuODEuMTcxLjM2IlBpbnRlcmVzdC8wLjIgKCtodHRwOi8vd3d3LnBpbnRlcmVzdC5jb20vKSI=",
+                      "timestamp": 1433332213911,
+                      "path": [
+                        "PRODUCT"
+                      ],
+                      "pathHash": "UFJPRFVDVA=="
+                    }
+                  ]
+                },
+                {
+                  "size": 1,
+                  "representants": [
+                    {
+                      "id": "MjEyLjc1LjEwMC41OCJNb3ppbGxhLzUuMCAoV2luZG93cyBOVCA2LjM7IFdPVzY0KSBBcHBsZVdlYktpdC81MzcuMzYgKEtIVE1MLCBsaWtlIEdlY2tvKSBDaHJvbWUvNDMuMC4yMzU3LjgxIFNhZmFyaS81MzcuMzYi",
+                      "timestamp": 1433332235679,
+                      "path": [
+                        "API_ME",
+                        "PRODUCT",
+                        "API_ME",
+                        "API_ME",
+                        "API_ME",
+                        "PRODUCT",
+                        "API_ME",
+                        null
+                      ],
+                      "pathHash": "QVBJX01FUFJPRFVDVEFQSV9NRUFQSV9NRUFQSV9NRVBST0RVQ1RBUElfTUVudWxs"
+                    }
+                  ]
+                },
+                {
+                  "size": 2,
+                  "representants": [
+                    {
+                      "id": "ODcuMjA0LjIzOC4yNDQiTW96aWxsYS81LjAgKFdpbmRvd3MgTlQgNi4zOyBXT1c2NDsgVHJpZGVudC83LjA7IHJ2OjExLjApIGxpa2UgR2Vja28i",
+                      "timestamp": 1433332227032,
+                      "path": [
+                        "INBOX",
+                        "INBOX",
+                        "INBOX",
+                        "INBOX",
+                        "INBOX",
+                        "INBOX",
+                        "INBOX",
+                        "INBOX",
+                        "INBOX",
+                        "INBOX",
+                        "INBOX",
+                        "INBOX",
+                        "INBOX",
+                        "INBOX"
+                      ],
+                      "pathHash": "SU5CT1hJTkJPWElOQk9YSU5CT1hJTkJPWElOQk9YSU5CT1hJTkJPWElOQk9YSU5CT1hJTkJPWElOQk9YSU5CT1hJTkJPWA=="
+                    }
+                  ]
+                },
+                {
+                  "size": 5,
+                  "representants": [
+                    {
+                      "id": "OTUuMTYwLjE0LjM5Ik1vemlsbGEvNS4wIChXaW5kb3dzIE5UIDYuMTsgV09XNjQpIEFwcGxlV2ViS2l0LzUzNy4zNiAoS0hUTUwsIGxpa2UgR2Vja28pIENocm9tZS80My4wLjIzNTcuODEgU2FmYXJpLzUzNy4zNiI=",
+                      "timestamp": 1433332220788,
+                      "path": [
+                        "INBOX",
+                        "INBOX",
+                        "INBOX",
+                        "INBOX",
+                        "INBOX",
+                        "INBOX",
+                        "INBOX",
+                        "INBOX",
+                        "INBOX",
+                        "INBOX",
+                        "INBOX",
+                        "INBOX",
+                        "INBOX",
+                        "INBOX",
+                        "INBOX",
+                        "INBOX",
+                        "INBOX",
+                        "INBOX",
+                        "INBOX",
+                        "INBOX",
+                        "INBOX",
+                        "INBOX",
+                        "INBOX"
+                      ],
+                      "pathHash": "SU5CT1hJTkJPWElOQk9YSU5CT1hJTkJPWElOQk9YSU5CT1hJTkJPWElOQk9YSU5CT1hJTkJPWElOQk9YSU5CT1hJTkJPWElOQk9YSU5CT1hJTkJPWElOQk9YSU5CT1hJTkJPWElOQk9YSU5CT1hJTkJPWA=="
+                    }
+                  ]
+                },
+                {
+                  "size": 1,
+                  "representants": [
+                    {
+                      "id": "NjIuMTQxLjIwNi4xMCJNb3ppbGxhLzUuMCAoV2luZG93cyBOVCA1LjE7IHJ2OjM1LjApIEdlY2tvLzIwMTAwMTAxIEZpcmVmb3gvMzUuMCI=",
+                      "timestamp": 1433332203412,
+                      "path": [
+                        "INBOX",
+                        "INBOX"
+                      ],
+                      "pathHash": "SU5CT1hJTkJPWA=="
+                    }
+                  ]
+                },
+                {
+                  "size": 1,
+                  "representants": [
+                    {
+                      "id": "NDYuMjM4LjExNS4xMjIiTW96aWxsYS81LjAgKFdpbmRvd3MgTlQgNi4xOyBXT1c2NDsgcnY6MzguMCkgR2Vja28vMjAxMDAxMDEgRmlyZWZveC8zOC4wIg==",
+                      "timestamp": 1433332221074,
+                      "path": [
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        "API_ME"
+                      ],
+                      "pathHash": "bnVsbG51bGxudWxsbnVsbG51bGxBUElfTUU="
+                    }
+                  ]
+                },
+                {
+                  "size": 1,
+                  "representants": [
+                    {
+                      "id": "NTQuODcuMTMyLjE1MCJQaW50ZXJlc3QvMC4yICgraHR0cDovL3d3dy5waW50ZXJlc3QuY29tLyki",
+                      "timestamp": 1433332220196,
+                      "path": [
+                        "PRODUCT",
+                        "PRODUCT",
+                        "PRODUCT"
+                      ],
+                      "pathHash": "UFJPRFVDVFBST0RVQ1RQUk9EVUNU"
+                    }
+                  ]
+                },
+                {
+                  "size": 1,
+                  "representants": [
+                    {
+                      "id": "ODQuMTAuNDQuMTY2Ik1vemlsbGEvNS4wIChpUGhvbmU7IENQVSBpUGhvbmUgT1MgOF8wXzIgbGlrZSBNYWMgT1MgWCkgQXBwbGVXZWJLaXQvNjAwLjEuNCAoS0hUTUwsIGxpa2UgR2Vja28pIFZlcnNpb24vOC4wIE1vYmlsZS8xMkE0MDUgU2FmYXJpLzYwMC4xLjQi",
+                      "timestamp": 1433332225725,
+                      "path": [
+                        "API_ME",
+                        "API_ME",
+                        null,
+                        "API_ME",
+                        "PRODUCT"
+                      ],
+                      "pathHash": "QVBJX01FQVBJX01FbnVsbEFQSV9NRVBST0RVQ1Q="
+                    }
+                  ]
+                },
+                {
+                  "size": 1,
+                  "representants": [
+                    {
+                      "id": "NTQuODMuMTMzLjI0IlBpbnRlcmVzdC8wLjIgKCtodHRwOi8vd3d3LnBpbnRlcmVzdC5jb20vKSI=",
+                      "timestamp": 1433332226420,
+                      "path": [
+                        "PRODUCT",
+                        "PRODUCT",
+                        "PRODUCT",
+                        null,
+                        "PRODUCT",
+                        null,
+                        "PRODUCT"
+                      ],
+                      "pathHash": "UFJPRFVDVFBST0RVQ1RQUk9EVUNUbnVsbFBST0RVQ1RudWxsUFJPRFVDVA=="
+                    }
+                  ]
+                },
+                {
+                  "size": 1,
+                  "representants": [
+                    {
+                      "id": "NzkuMTg5LjQ4LjIwMiJNb3ppbGxhLzUuMCAoV2luZG93cyBOVCA2LjE7IFdPVzY0KSBBcHBsZVdlYktpdC81MzcuMzYgKEtIVE1MLCBsaWtlIEdlY2tvKSBDaHJvbWUvNDMuMC4yMzU3LjgxIFNhZmFyaS81MzcuMzYi",
+                      "timestamp": 1433332215937,
+                      "path": [
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null
+                      ],
+                      "pathHash": "bnVsbG51bGxudWxsbnVsbG51bGxudWxsbnVsbG51bGxudWxs"
+                    }
+                  ]
+                },
+                {
+                  "size": 1,
+                  "representants": [
+                    {
+                      "id": "ODAuNTUuMTY0LjQxIk1vemlsbGEvNS4wIChXaW5kb3dzIE5UIDYuMTsgV09XNjQ7IHJ2OjM4LjApIEdlY2tvLzIwMTAwMTAxIEZpcmVmb3gvMzguMCI=",
+                      "timestamp": 1433332208342,
+                      "path": [
+                        "API_ME",
+                        "PRODUCT",
+                        "API_ME",
+                        "PRODUCT",
+                        "PRODUCT",
+                        "API_ME",
+                        "API_ME",
+                        null
+                      ],
+                      "pathHash": "QVBJX01FUFJPRFVDVEFQSV9NRVBST0RVQ1RQUk9EVUNUQVBJX01FQVBJX01FbnVsbA=="
+                    }
+                  ]
+                },
+                {
+                  "size": 1,
+                  "representants": [
+                    {
+                      "id": "NTQuMTc3Ljk5LjI1MCJNb3ppbGxhLzUuMCAoV2luZG93cyBOVCA2LjE7IFdPVzY0OyBydjoxNS4wKSBHZWNrby8yMDEwMDEwMSBGaXJlZm94LzE1LjAuMSI=",
+                      "timestamp": 1433332212359,
+                      "path": [
+                        null,
+                        null,
+                        null
+                      ],
+                      "pathHash": "bnVsbG51bGxudWxs"
+                    }
+                  ]
+                },
+                {
+                  "size": 1,
+                  "representants": [
+                    {
+                      "id": "MTc4LjIxNi45MS4xOTEiTW96aWxsYS81LjAgKFdpbmRvd3MgTlQgNi4zOyBXT1c2NCkgQXBwbGVXZWJLaXQvNTM3LjM2IChLSFRNTCwgbGlrZSBHZWNrbykgQ2hyb21lLzQzLjAuMjM1Ny44MSBTYWZhcmkvNTM3LjM2Ig==",
+                      "timestamp": 1433332206051,
+                      "path": [
+                        "API_ME"
+                      ],
+                      "pathHash": "QVBJX01F"
+                    }
+                  ]
+                },
+                {
+                  "size": 1,
+                  "representants": [
+                    {
+                      "id": "MTc4LjQzLjY0LjExMyJNb3ppbGxhLzUuMCAoV2luZG93cyBOVCA2LjM7IFdPVzY0KSBBcHBsZVdlYktpdC81MzcuMzYgKEtIVE1MLCBsaWtlIEdlY2tvKSBDaHJvbWUvNDIuMC4yMzExLjE1MiBTYWZhcmkvNTM3LjM2IE9QUi8yOS4wLjE3OTUuNjAi",
+                      "timestamp": 1433332224294,
+                      "path": [
+                        null,
+                        null,
+                        null,
+                        "API_ME",
+                        "API_ME",
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        "API_ME"
+                      ],
+                      "pathHash": "bnVsbG51bGxudWxsQVBJX01FQVBJX01FbnVsbG51bGxudWxsbnVsbG51bGxudWxsbnVsbG51bGxudWxsbnVsbEFQSV9NRQ=="
+                    }
+                  ]
+                },
+                {
+                  "size": 1,
+                  "representants": [
+                    {
+                      "id": "ODkuNzAuMjMzLjUyIk1vemlsbGEvNS4wIChXaW5kb3dzIE5UIDYuMzsgV09XNjQ7IFRyaWRlbnQvNy4wOyBNQVNNSlM7IHJ2OjExLjApIGxpa2UgR2Vja28i",
+                      "timestamp": 1433332208174,
+                      "path": [
+                        "API_ME",
+                        "API_ME",
+                        "API_ME",
+                        null,
+                        "API_ME",
+                        "API_ME",
+                        "API_ME",
+                        null
+                      ],
+                      "pathHash": "QVBJX01FQVBJX01FQVBJX01FbnVsbEFQSV9NRUFQSV9NRUFQSV9NRW51bGw="
+                    }
+                  ]
+                }
+              ],
+              "clusters_count": 16,
+              "clusters_users_count": 24
+            }
+          }
+        }
+      ]
+    }
+  }
+}

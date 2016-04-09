@@ -134,18 +134,24 @@ def calculate_sequences_score_psa = { ArrayList sequence1, ArrayList sequence2 -
 
 HashMap<String, HashMap<String, Integer>> distances = new HashMap<>()
 for (user1 in users) {
-    distances[user1.id] = new HashMap<>()
-    for (user2 in users) {
-        distance = calculate_sequences_score_psa(user1.path, user2.path) - 100
-        distance = (user1.id == user2.id) ? 1 : distance
-        distances[user1.id][user2.id] = distance
+    if(user1 != null) {
+        distances[user1.id] = new HashMap<>()
+        for (user2 in users) {
+            if(user2 != null) {
+                distance = calculate_sequences_score_psa(user1.path, user2.path) - 100
+                distance = (user1.id == user2.id) ? 1 : distance
+                distances[user1.id][user2.id] = distance
+            }
+        }
     }
 }
 
 // perform hierarchical clustering using distance matrix
 HashMap<String, HashMap<String, String>> clusters = new HashMap<>()
 for (u in users) {
-    clusters[u.id] = [u]
+    if(u != null) {
+        clusters[u.id] = [u]
+    }
 }
 
 def mergeClosestClusters = { HashMap<String, HashMap<String, String>> _clusters, HashMap<String, HashMap<String, Integer>> _distances ->
@@ -162,7 +168,7 @@ def mergeClosestClusters = { HashMap<String, HashMap<String, String>> _clusters,
     }
 //    println(merge)
 //    println(mergeDistance)
-    if (mergeDistance < -50) {
+    if (mergeDistance < -30) {
         return false
     }
 
@@ -201,9 +207,10 @@ while (mergeClosestClusters(clusters, distances)) {
 result = [clusters: [], clusters_count: clusters.size(), clusters_users_count: 0]
 for (cluster in clusters) {
     clusterSize = cluster.value.size()
+    cluster.value[0]['pathHash'] = cluster.value[0].path.join().bytes.encodeBase64().toString()
     result.clusters.add([size: clusterSize, representants: [
-            cluster.value[0]]
-    ]);
+            cluster.value[0]
+    ]]);
     result.clusters_users_count += clusterSize
 }
 

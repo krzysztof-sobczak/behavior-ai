@@ -26,7 +26,7 @@
     }
 
     var margin = {top: 20, right: 200, bottom: 0, left: 20},
-        width = 1024,
+        width = 600,
         height = 650;
 
     var c = d3.scale.category20c();
@@ -39,21 +39,47 @@
             .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
 
-    d3.json("data_parsed.json", function(data) {
-        data.forEach(function(d) {
-            d['clusters'].forEach(function(cluster) {
-                cluster[0] = new Date(cluster[0] * 1000);
-                cluster[1] = new Date(cluster[1] * 1000);
+    d3.json("data_es.json", function(data) {
+        data = data['aggregations']['timeframes']['buckets'];
+        var timeframesCount = data.length;
+        var clusterList = [];
+        data.forEach(function(timeframeData) {
+            timeframeData['timeframe_start'] = new Date(timeframeData['key']);
+            timeframeData['timeframe_end'] = new Date((timeframeData['key']+300));
+            timeframeData['behaviors']['value']['clusters'].forEach(function(cluster) {
+                var timeframe = [
+                    timeframeData['timeframe_start'],
+                    timeframeData['timeframe_end'],
+                    cluster['size']
+                ];
+                var representant = cluster['representants'][0];
+                if(clusterList.hasOwnProperty(representant.pathHash)) {
+                    clusterList[representant.pathHash].timeframes.push(timeframe)
+                } else {
+                    clusterList[representant.pathHash] = {
+                        "timeframes": [
+                            timeframe
+                        ],
+                        "name": representant['path'].join(', ')
+                    }
+                }
             });
         });
-        var xMin = d3.min(data, function(d){
-            return d3.min(d['clusters'], function(c){
-                return Math.min(c[0]);
+        data = [];
+        for (var key in clusterList) {
+            if (!clusterList.hasOwnProperty(key)) continue;
+            data.push(clusterList[key]);
+        }
+        clusterList = null;
+
+        var xMin = d3.min(data, function(cluster){
+            return d3.min(cluster['timeframes'], function(timeframe) {
+                return timeframe[0];
             });
         });
-        var xMax = d3.max(data, function(d){
-            return d3.max(d['clusters'], function(c){
-                return Math.max(c[1]);
+        var xMax = d3.max(data, function(cluster){
+            return d3.max(cluster['timeframes'], function(timeframe) {
+                return timeframe[1];
             });
         });
         console.log(xMin);
@@ -67,7 +93,7 @@
         xAxis = d3.svg.axis()
                 .scale(xScale)
                 .orient("top")
-                .ticks(5)
+                .ticks(timeframesCount)
                 .tickPadding(5)
                 .tickFormat(timeFormat);
 
@@ -80,17 +106,17 @@
             var g = svg.append("g").attr("class","journal");
 
             var circles = g.selectAll("circle")
-                    .data(data[j]['clusters'])
+                    .data(data[j]['timeframes'])
                     .enter()
                     .append("circle");
 
             var text = g.selectAll("text")
-                    .data(data[j]['clusters'])
+                    .data(data[j]['timeframes'])
                     .enter()
                     .append("text");
 
             var rScale = d3.scale.linear()
-                    .domain([0, d3.max(data[j]['clusters'], function(d) { return d[2]; })])
+                    .domain([0, d3.max(data[j]['timeframes'], function(d) { return d[2]; })])
                     .range([2, 12]);
 
             circles
