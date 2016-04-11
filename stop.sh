@@ -13,3 +13,7 @@ cd ${BEHAVIORAI}
 cd ${BEHAVIORAI}/behavior-ai-collector
 docker-compose stop
 cd ${BEHAVIORAI}
+
+cd ${BEHAVIORAI}/behavior-ai-frontapp
+docker-compose stop
+cd ${BEHAVIORAI}

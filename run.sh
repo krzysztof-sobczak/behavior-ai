@@ -13,3 +13,7 @@ cd ${BEHAVIORAI}
 cd ${BEHAVIORAI}/behavior-ai-collector
 docker-compose up -d
 cd ${BEHAVIORAI}
+
+cd ${BEHAVIORAI}/behavior-ai-frontapp
+docker-compose up -d
+cd ${BEHAVIORAI}

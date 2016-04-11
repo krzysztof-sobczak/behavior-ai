@@ -15,3 +15,7 @@ cd ${BEHAVIORAI}
 cd ${BEHAVIORAI}/behavior-ai-collector
 docker-compose rm -f
 cd ${BEHAVIORAI}
+
+cd ${BEHAVIORAI}/behavior-ai-frontapp
+docker-compose rm -f
+cd ${BEHAVIORAI}

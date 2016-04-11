@@ -1,9 +1,11 @@
 
 <html>
 <head>
-    <script src="./jquery.min.js"></script>
+    <script src="./scripts/jquery.min.js"></script>
+    <script src="./scripts/d3.js"></script>
+    <script src="./scripts/visualization.js"></script>
     <script src="./bower_components/elasticsearch/elasticsearch.js"></script>
-    <script src="./scripts.js"></script>
+    <script src="./scripts/storage.js"></script>
     <style type="text/css">
         body{font-family: Arial, sans-serif;font-size:10px;}
         .axis path,.axis line {fill: none;stroke:#b6b6b6;shape-rendering: crispEdges;}
@@ -17,163 +19,11 @@
 <body>
 
 <script type="text/javascript">
-    function truncate(str, maxLength, suffix) {
-        if(str.length > maxLength) {
-            str = str.substring(0, maxLength + 1);
-            str = str.substring(0, Math.min(str.length, str.lastIndexOf(" ")));
-            str = str + suffix;
-        }
-        return str;
-    }
-
-    var client = elasticsearch.Client({
-        hosts: 'http://192.168.99.100:9200'
+    $(document).ready(function() {
+        visualizationInit();
+        storageInit();
+//        storageSearch(5, visualize);
     });
-
-    client.ping({
-        requestTimeout: 30000,
-
-        // undocumented params are appended to the query string
-        hello: "elasticsearch"
-    }, function (error) {
-        if (error) {
-            console.error('elasticsearch cluster is down!');
-        } else {
-            console.log('All is well');
-        }
-    });
-
-    var margin = {top: 20, right: 200, bottom: 0, left: 20},
-        width = 600,
-        height = 650;
-
-    var c = d3.scale.category20c();
-
-    var svg = d3.select("body").append("svg")
-            .attr("width", width + margin.left + margin.right)
-            .attr("height", height + margin.top + margin.bottom)
-            .style("margin-left", margin.left + "px")
-            .append("g")
-            .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
-
-    d3.json("data_es.json", function(data) {
-        data = data['aggregations']['timeframes']['buckets'];
-        var timeframesCount = data.length;
-        var clusterList = [];
-        data.forEach(function(timeframeData) {
-            timeframeData['timeframe_start'] = new Date(timeframeData['key']);
-            timeframeData['timeframe_end'] = new Date((timeframeData['key']+300));
-            timeframeData['behaviors']['value']['clusters'].forEach(function(cluster) {
-                var timeframe = [
-                    timeframeData['timeframe_start'],
-                    timeframeData['timeframe_end'],
-                    cluster['size']
-                ];
-                var representant = cluster['representants'][0];
-                if(clusterList.hasOwnProperty(representant.pathHash)) {
-                    clusterList[representant.pathHash].timeframes.push(timeframe)
-                } else {
-                    clusterList[representant.pathHash] = {
-                        "timeframes": [
-                            timeframe
-                        ],
-                        "name": representant['path'].join(', ')
-                    }
-                }
-            });
-        });
-        data = [];
-        for (var key in clusterList) {
-            if (!clusterList.hasOwnProperty(key)) continue;
-            data.push(clusterList[key]);
-        }
-        clusterList = null;
-
-        var xMin = d3.min(data, function(cluster){
-            return d3.min(cluster['timeframes'], function(timeframe) {
-                return timeframe[0];
-            });
-        });
-        var xMax = d3.max(data, function(cluster){
-            return d3.max(cluster['timeframes'], function(timeframe) {
-                return timeframe[1];
-            });
-        });
-        console.log(xMin);
-        console.log(xMax);
-
-        var xScale = d3.time.scale()
-                .domain([xMin, xMax])
-                .range([0, width]);
-
-        var timeFormat = d3.time.format("%m/%d %H:%M");
-        xAxis = d3.svg.axis()
-                .scale(xScale)
-                .orient("top")
-                .ticks(timeframesCount)
-                .tickPadding(5)
-                .tickFormat(timeFormat);
-
-        svg.append("g")
-                .attr("class", "x axis")
-                .attr("transform", "translate(0," + 0 + ")")
-                .call(xAxis);
-
-        for (var j = 0; j < data.length; j++) {
-            var g = svg.append("g").attr("class","journal");
-
-            var circles = g.selectAll("circle")
-                    .data(data[j]['timeframes'])
-                    .enter()
-                    .append("circle");
-
-            var text = g.selectAll("text")
-                    .data(data[j]['timeframes'])
-                    .enter()
-                    .append("text");
-
-            var rScale = d3.scale.linear()
-                    .domain([0, d3.max(data[j]['timeframes'], function(d) { return d[2]; })])
-                    .range([2, 12]);
-
-            circles
-                    .attr("cx", function(d, i) { return xScale(d[0]); })
-                    .attr("cy", j*30+20)
-                    .attr("r", function(d) { return rScale(d[2]); })
-                    .style("fill", function(d) { return c(j); });
-
-            text
-                    .attr("y", j*30+25)
-                    .attr("x",function(d, i) { return xScale(d[0])-5; })
-                    .attr("class","value")
-                    .text(function(d){ return d[2]; })
-                    .style("fill", function(d) { return c(j); })
-                    .style("display","none");
-
-            g.append("text")
-                    .attr("y", j*30+25)
-                    .attr("x",width+20)
-                    .attr("class","label")
-                    .text(truncate(data[j]['name'],30,"..."))
-                    .style("fill", function(d) { return c(j); })
-                    .on("mouseover", mouseover)
-                    .on("mouseout", mouseout);
-        };
-
-        function mouseover(p) {
-            var g = d3.select(this).node().parentNode;
-            d3.select(g).selectAll("circle").style("display","none");
-            d3.select(g).selectAll("text.value").style("display","block");
-        }
-
-        function mouseout(p) {
-            var g = d3.select(this).node().parentNode;
-            d3.select(g).selectAll("circle").style("display","block");
-            d3.select(g).selectAll("text.value").style("display","none");
-        }
-    });
-
 </script>
 
 </body>

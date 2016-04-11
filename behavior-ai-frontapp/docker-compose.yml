@@ -1,16 +1,23 @@
-#frontapp:
-#  build: .
-#  ports:
-#   - "80:80"
-#  volumes:
-#   - .:/data/frontapp
-#  links:
-#   - elasticsearch
+application:
+  image: busybox
+  volumes:
+    - .:/usr/share/nginx/html
 
-#elasticsearch:
-#  image: elasticsearch
-#  volumes:
-#    - ./elasticsearch/plugins:/usr/share/elasticsearch/plugins
-#  ports:
-#    - 9200:9200
-#    - 9300:9300
+nginx:
+  image: nginx
+  volumes_from:
+    - application
+  expose:
+    - 80
+  ports:
+    - 8001:80
+  environment:
+    VIRTUAL_HOST: frontapp.behaviorai.docker
+    VIRTUAL_PORT: 8001
+
+bower:
+  image: digitallyseamless/nodejs-bower-grunt
+  volumes_from:
+    - application
+  working_dir: /data/application
+  command: bower install elasticsearch

@@ -131,7 +131,8 @@ def calculate_sequences_score_psa = { ArrayList sequence1, ArrayList sequence2 -
     return scaledScore
 }
 
-
+start1 = System.currentTimeMillis();
+distanceCalculations = 0;
 HashMap<String, HashMap<String, Integer>> distances = new HashMap<>()
 for (user1 in users) {
     if(user1 != null) {
@@ -141,10 +142,12 @@ for (user1 in users) {
                 distance = calculate_sequences_score_psa(user1.path, user2.path) - 100
                 distance = (user1.id == user2.id) ? 1 : distance
                 distances[user1.id][user2.id] = distance
+                distanceCalculations = distanceCalculations + 1;
             }
         }
     }
 }
+time1 = System.currentTimeMillis() - start1;
 
 // perform hierarchical clustering using distance matrix
 HashMap<String, HashMap<String, String>> clusters = new HashMap<>()
@@ -204,7 +207,7 @@ while (mergeClosestClusters(clusters, distances)) {
 // in distance matrix of cluster we sum-up each row
 // and find user with minimal value
 
-result = [clusters: [], clusters_count: clusters.size(), clusters_users_count: 0]
+result = [clusters: [], clusters_count: clusters.size(), clusters_users_count: 0, times: [time1], counters: [users.size(),distanceCalculations]]
 for (cluster in clusters) {
     clusterSize = cluster.value.size()
     cluster.value[0]['pathHash'] = cluster.value[0].path.join().bytes.encodeBase64().toString()

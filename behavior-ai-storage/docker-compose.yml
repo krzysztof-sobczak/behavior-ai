@@ -7,3 +7,5 @@ elasticsearch:
     - 9200:9200
     - 9300:9300
   command: ["elasticsearch", "--security.manager.enabled", "false"]
+  environment:
+      VIRTUAL_HOST: storage.behaviorai.docker
