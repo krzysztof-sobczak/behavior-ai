@@ -1,87 +1,4 @@
-if (!binding.variables.containsKey('_aggs')) {
-    _aggs = [
-            [
-                    id  : "AS1",
-                    path: [
-                            [
-                                    item     : "INBOX",
-                                    timestamp: 1
-                            ],
-                            [
-                                    item     : "API_ME",
-                                    timestamp: 2
-                            ],
-                            [
-                                    item     : "INBOX",
-                                    timestamp: 8
-                            ],
-                            [
-                                    item     : "INBOX",
-                                    timestamp: 9
-                            ],
-                            [
-                                    item     : "API_ME",
-                                    timestamp: 10
-                            ],
-                            [
-                                    item     : "API_ME",
-                                    timestamp: 11
-                            ]
-                    ]
-            ],
-            [
-                    id  : "AS1",
-                    path: [
-                            [
-                                    item     : "PRODUCT",
-                                    timestamp: 4
-                            ],
-                            [
-                                    item     : "PRODUCT",
-                                    timestamp: 5
-                            ],
-                            [
-                                    item     : "PRODUCT",
-                                    timestamp: 6
-                            ]
-                    ]
-            ]
-    ]
-}
-users = [];
-for (a in _aggs) {
-    if (a != null) {
-        users = users + a;
-    }
-}
-
-// make one list of user sessions
-mergedUsers = new HashMap<>();
-for (u in users) {
-    if (mergedUsers.containsKey(u.id)) {
-        for (pathItem in u.path) {
-            mergedUsers[u.id].path.add(pathItem);
-        }
-        mergedUsers[u.id].path.sort({ it.timestamp })
-    } else {
-        mergedUsers[u.id] = u;
-    }
-};
-users = [];
-for (u in mergedUsers) {
-    path = [];
-    for (pathItem in u.value.path) {
-        path.add(pathItem.item)
-    }
-    user = u.value;
-    user.path = path;
-    users.add(user);
-}
-_aggs = null;
-mergedUsers = null;
-
-// create distance matrix
-// using PSA algorithm on user.path
+// ------ PSA functions
 
 def createPSA = { length1, length2 ->
     psaTable = []
@@ -171,6 +88,138 @@ def calculate_sequences_score_psa = { ArrayList sequence1, ArrayList sequence2 -
     return scaledScore
 }.memoize()
 
+// ------ PSA functions end
+
+// ------ Clustering functions start
+
+def mergeClosestClusters = { HashMap<String, HashMap<String, String>> _clusters, HashMap<String, HashMap<String, Integer>> _distances ->
+    merge = []
+    mergeDistance = -99999
+    for (c1 in _distances) {
+        for (c2 in _distances) {
+            distance = _distances[c1.key][c2.key]
+            if (distance != 1 && distance > mergeDistance) {
+                merge = [c1.key, c2.key]
+                mergeDistance = distance
+            }
+        }
+    }
+//    println(merge)
+//    println(mergeDistance)
+    if (mergeDistance < -30) {
+        return false
+    }
+
+    // perform cluster merging
+
+    for (user in _clusters[merge[1]]) {
+        _clusters[merge[0]].add(user)
+    }
+    _clusters.remove(merge[1])
+//    println(_clusters)
+
+    for (d in _distances[merge[0]]) {
+//        println(d.key+": comparing "+d.value+" and "+_distances[merge[1]][d.key])
+        max = Math.max(d.value, _distances[merge[1]][d.key])
+        d.setValue(max)
+        _distances[d.key][merge[0]] = max
+    }
+    for (d in _distances) {
+        d.value.remove(merge[1])
+    }
+    _distances.remove(merge[1])
+    return true
+}
+
+// ------ Clustering functions end
+
+// ------ MOCKS START
+if (!binding.variables.containsKey('_aggs')) {
+    _aggs = [
+            [
+                    id  : "AS1",
+                    path: [
+                            [
+                                    item     : "INBOX",
+                                    timestamp: 1
+                            ],
+                            [
+                                    item     : "API_ME",
+                                    timestamp: 2
+                            ],
+                            [
+                                    item     : "INBOX",
+                                    timestamp: 8
+                            ],
+                            [
+                                    item     : "INBOX",
+                                    timestamp: 9
+                            ],
+                            [
+                                    item     : "API_ME",
+                                    timestamp: 10
+                            ],
+                            [
+                                    item     : "API_ME",
+                                    timestamp: 11
+                            ]
+                    ]
+            ],
+            [
+                    id  : "AS1",
+                    path: [
+                            [
+                                    item     : "PRODUCT",
+                                    timestamp: 4
+                            ],
+                            [
+                                    item     : "PRODUCT",
+                                    timestamp: 5
+                            ],
+                            [
+                                    item     : "PRODUCT",
+                                    timestamp: 6
+                            ]
+                    ]
+            ]
+    ]
+}
+// ------ MOCKS END
+
+users = [];
+for (a in _aggs) {
+    if (a != null) {
+        users = users + a;
+    }
+}
+
+// ------ INITIALIZATION START
+// make one list of user sessions
+mergedUsers = new HashMap<>();
+for (u in users) {
+    if (mergedUsers.containsKey(u.id)) {
+        for (pathItem in u.path) {
+            mergedUsers[u.id].path.add(pathItem);
+        }
+        mergedUsers[u.id].path.sort({ it.timestamp })
+    } else {
+        mergedUsers[u.id] = u;
+    }
+};
+users = [];
+for (u in mergedUsers) {
+    path = [];
+    for (pathItem in u.value.path) {
+        path.add(pathItem.item)
+    }
+    user = u.value;
+    user.path = path;
+    users.add(user);
+}
+_aggs = null;
+mergedUsers = null;
+// ------ INITIALIZATION END
+
 distanceCalculations = 0;
 timePSA = 0;
 startDistances = System.currentTimeMillis();
@@ -209,45 +258,6 @@ for (u in users) {
     if (u != null) {
         clusters[u.id] = [u]
     }
-}
-
-def mergeClosestClusters = { HashMap<String, HashMap<String, String>> _clusters, HashMap<String, HashMap<String, Integer>> _distances ->
-    merge = []
-    mergeDistance = -99999
-    for (c1 in distances) {
-        for (c2 in distances) {
-            distance = distances[c1.key][c2.key]
-            if (distance != 1 && distance > mergeDistance) {
-                merge = [c1.key, c2.key]
-                mergeDistance = distance
-            }
-        }
-    }
-//    println(merge)
-//    println(mergeDistance)
-    if (mergeDistance < -30) {
-        return false
-    }
-
-    // perform cluster merging
-
-    for (user in clusters[merge[1]]) {
-        clusters[merge[0]].add(user)
-    }
-    clusters.remove(merge[1])
-//    println(clusters)
-
-    for (d in distances[merge[0]]) {
-//        println(d.key+": comparing "+d.value+" and "+distances[merge[1]][d.key])
-        max = Math.max(d.value, distances[merge[1]][d.key])
-        d.setValue(max)
-        distances[d.key][merge[0]] = max
-    }
-    for (d in distances) {
-        d.value.remove(merge[1])
-    }
-    distances.remove(merge[1])
-    return true
 }
 
 // keep clustering until merge is possible
