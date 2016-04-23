@@ -2,42 +2,134 @@ if (!binding.variables.containsKey('_aggs')) {
     _aggs = [
             [
                     id  : "AS1",
-                    path: ["INBOX", "API_ME", "INBOX", "INBOX", "API_ME", "API_ME"]
+                    path: [
+                            [
+                                    item     : "INBOX",
+                                    timestamp: 1
+                            ],
+                            [
+                                    item     : "API_ME",
+                                    timestamp: 2
+                            ],
+                            [
+                                    item     : "INBOX",
+                                    timestamp: 8
+                            ],
+                            [
+                                    item     : "INBOX",
+                                    timestamp: 9
+                            ],
+                            [
+                                    item     : "API_ME",
+                                    timestamp: 10
+                            ],
+                            [
+                                    item     : "API_ME",
+                                    timestamp: 11
+                            ]
+                    ]
             ],
             [
-                    id  : "AS3",
-                    path: ["PRODUCT", "API_ME", "PRODUCT", "INBOX", "PRODUCT", "API_ME", "PRODUCT", "INBOX"]
-            ],
-            [
-                    id  : "AS4",
-                    path: ["INBOX", "API_ME", "API_ME", "INBOX", "API_ME", "API_ME"]
-            ],
-            [
-                    id  : "AS2",
-                    path: ["INBOX", "API_ME", "INBOX", "API_ME", "PRODUCT", "INBOX"]
-            ],
-            [
-                    id  : "AS5",
-                    path: ["INBOX", "API_ME", "PRODUCT", "INBOX", "PRODUCT", "INBOX", "PRODUCT", "INBOX"]
-            ],
-            [
-                    id  : "AS6",
-                    path: ["INBOX", "API_ME", "INBOX", "API_ME"]
-            ],
-            [
-                    id  : "AS7",
-                    path: ["PRODUCT", "API_ME", "INBOX", "INBOX"]
+                    id  : "AS1",
+                    path: [
+                            [
+                                    item     : "PRODUCT",
+                                    timestamp: 4
+                            ],
+                            [
+                                    item     : "PRODUCT",
+                                    timestamp: 5
+                            ],
+                            [
+                                    item     : "PRODUCT",
+                                    timestamp: 6
+                            ]
+                    ]
             ]
     ]
 }
+users = [];
+for (a in _aggs) {
+    if (a != null) {
+        users = users + a;
+    }
+}
 
 // make one list of user sessions
-users = []; for (a in _aggs) {
-    users = users + a
+mergedUsers = new HashMap<>();
+for (u in users) {
+    if (mergedUsers.containsKey(u.id)) {
+        for (pathItem in u.path) {
+            mergedUsers[u.id].path.add(pathItem);
+        }
+        mergedUsers[u.id].path.sort({ it.timestamp })
+    } else {
+        mergedUsers[u.id] = u;
+    }
 };
+users = [];
+for (u in mergedUsers) {
+    path = [];
+    for (pathItem in u.value.path) {
+        path.add(pathItem.item)
+    }
+    user = u.value;
+    user.path = path;
+    users.add(user);
+}
+_aggs = null;
+mergedUsers = null;
 
 // create distance matrix
 // using PSA algorithm on user.path
+
+def createPSA = { length1, length2 ->
+    psaTable = []
+    for (Integer x in (0..seq1len)) {
+        psaTable[x] = []
+        for (Integer y in (0..seq2len)) {
+            if ((x == 0 || y == 0) && !semiglobalMode) {
+                penalty = (x == 0) ? -y : -x;
+            } else {
+                penalty = 0
+            }
+            psaTable[x][y] = penalty
+        }
+    }
+    return psaTable
+}.memoize()
+
+def isSemiglobal = { length1, length2 ->
+    // check length difference
+    if (length1 >= length2) {
+        lengthSimilarityPercent = length2 / length1 * 100
+    } else {
+        lengthSimilarityPercent = length1 / length2 * 100
+    }
+
+    // check for semiglobal mode
+    semiglobalMode = (lengthSimilarityPercent < 80)
+    return semiglobalMode
+}.memoize()
+
+def calculate_move_value = { boolean sequenceMatching, Integer vertical, Integer horizontal, Integer diagonal, Integer x, Integer y, boolean semiglobalMode ->
+    verticalGapPenalty = (semiglobalMode && x == (rowCount - 1)) ? 0 : -1
+    verticalMove = (y > 0) ? vertical + verticalGapPenalty : -99999
+    horizontalGapPenalty = (semiglobalMode && y == (colCount - 1)) ? 0 : -1
+    horizontalMove = (x > 0) ? horizontal + horizontalGapPenalty : -99999
+    if (x > 0 && y > 0 && sequenceMatching) {
+        diagonalScore = 1
+        diagonalMove = diagonal + diagonalScore
+    } else {
+        // should low enough to be ignored
+        diagonalScore = -99999
+        diagonalMove = diagonalScore
+    }
+
+    bestMoveValue = [verticalMove, horizontalMove, diagonalMove].max()
+
+    return bestMoveValue
+}.memoize()
 
 def calculate_sequences_score_psa = { ArrayList sequence1, ArrayList sequence2 ->
 
@@ -45,114 +137,76 @@ def calculate_sequences_score_psa = { ArrayList sequence1, ArrayList sequence2 -
     seq1len = sequence1.size()
     seq2len = sequence2.size()
 
-    // check length difference
-    if (seq1len >= seq2len) {
-        lengthSimilarityPercent = seq2len / seq1len * 100
-    } else {
-        lengthSimilarityPercent = seq1len / seq2len * 100
-    }
-
-    // check for semiglobal mode
-    semiglobalMode = (lengthSimilarityPercent < 80)
-    if (semiglobalMode) {
-//        println("Performing semiglobal alignment")
-    }
+//    semiglobalMode = isSemiglobal(seq1len, seq2len)
+    semiglobalMode = true
 
     // create PSA table
-    psaTable = []
-    (seq1len + 1).times { y ->
-        psaTable[y] = []
-        (seq2len + 1).times { x ->
-            if ((y == 0 || x == 0) && !semiglobalMode) {
-                penalty = (y == 0) ? -x : -y;
-            } else {
-                penalty = 0
-            }
-            psaTable[y][x] = penalty
-        }
-    }
-//    println(psaTable)
+    psaTable = createPSA(seq1len, seq2len);
 
-    def calculate_move_value = { ArrayList seq1, ArrayList seq2, ArrayList<ArrayList<Integer>> psaTable, ArrayList<Integer> pointer, Boolean semiglobalMode ->
-        pointerX = pointer[0]
-        pointerY = pointer[1]
-        colCount = psaTable[0].size()
-        rowCount = psaTable.size()
-        verticalGapPenalty = (semiglobalMode && pointerX == (rowCount - 1)) ? 0 : -1
-        verticalMove = (pointerY > 0) ? psaTable[pointerX][pointerY - 1] + verticalGapPenalty : -99999
-        horizontalGapPenalty = (semiglobalMode && pointerY == (colCount - 1)) ? 0 : -1
-        horizontalMove = (pointerX > 0) ? psaTable[pointerX - 1][pointerY] + horizontalGapPenalty : -99999
-        if (pointerX > 0 && pointerY > 0 && seq1[pointerX - 1] == seq2[pointerY - 1]) {
-            diagonalScore = 1
-            diagonalMove = psaTable[pointerX - 1][pointerY - 1] + diagonalScore
-        } else {
-            // should low enough to be ignored
-            diagonalScore = -99999
-            diagonalMove = diagonalScore
-        }
-
-        // [value, step]
-        bestMoveValue = [verticalMove, horizontalMove, diagonalMove].max()
-        if (verticalMove == bestMoveValue) {
-            bestMoveType = [0, -1]
-        } else {
-            if (horizontalMove == bestMoveValue) {
-                bestMoveType = [-1, 0]
-            } else {
-                bestMoveType = [-1, -1]
-            }
-        }
-
-        return [bestMoveValue, bestMoveType]
-    }
+    // shared counters
+    colCount = seq1len + 1
+    rowCount = seq2len + 1
 
     // create PSA table pointer
     pointer = [1, 1]
-    (seq1len + 1).times { x ->
-        (seq2len + 1).times { y ->
+    for (Integer x in (0..seq1len)) {
+        for (Integer y in (0..seq2len)) {
 //            println("[" + x + "," + y + "]")
             if (x > 0 && y > 0) {
-                pointer = [x, y]
-                bestMove = calculate_move_value(sequence1, sequence2, psaTable, pointer, semiglobalMode)
-                bestMoveValue = bestMove[0]
-                psaTable[pointer[0]][pointer[1]] = bestMoveValue
+                boolean sequenceMatching = (sequence1[x - 1] == sequence2[y - 1]);
+                Integer horizontal = psaTable[x - 1][y];
+                Integer vertical = psaTable[x][y - 1];
+                Integer diagonal = psaTable[x - 1][y - 1];
+                psaTable[x][y] = calculate_move_value(sequenceMatching, vertical, horizontal, diagonal, x, y, semiglobalMode)
             }
         }
     }
-
-//    println(psaTable)
 
     // get optimal move
     optimalMoveValue = psaTable[seq1len][seq2len]
 
-    maxScore = Math.max(seq1len, seq2len)
+    maxScore = Math.min(seq1len, seq2len)
     scaledScore = Math.round(optimalMoveValue / maxScore * 100)
 
     return scaledScore
-}
+}.memoize()
 
-start1 = System.currentTimeMillis();
 distanceCalculations = 0;
+timePSA = 0;
+startDistances = System.currentTimeMillis();
 HashMap<String, HashMap<String, Integer>> distances = new HashMap<>()
 for (user1 in users) {
-    if(user1 != null) {
-        distances[user1.id] = new HashMap<>()
+    if (user1 != null) {
+        if (!distances.containsKey(user1.id)) {
+            distances[user1.id] = new HashMap<>()
+        }
         for (user2 in users) {
-            if(user2 != null) {
-                distance = calculate_sequences_score_psa(user1.path, user2.path) - 100
-                distance = (user1.id == user2.id) ? 1 : distance
-                distances[user1.id][user2.id] = distance
-                distanceCalculations = distanceCalculations + 1;
+            if (user2 != null) {
+                if (!distances[user1.id].containsKey(user2.id)) {
+                    if (user1.id == user2.id) {
+                        distance = 1
+                    } else {
+                        startPSA = System.currentTimeMillis();
+                        distance = calculate_sequences_score_psa(user1.path, user2.path) - 100
+                        timePSA = timePSA + (System.currentTimeMillis() - startPSA);
+                    }
+                    distances[user1.id][user2.id] = distance
+                    if (!distances.containsKey(user2.id)) {
+                        distances[user2.id] = new HashMap<>()
+                    }
+                    distances[user2.id][user1.id] = distance
+                    distanceCalculations = distanceCalculations + 1;
+                }
             }
         }
     }
 }
-time1 = System.currentTimeMillis() - start1;
+timeDistances = System.currentTimeMillis() - startDistances;
 
 // perform hierarchical clustering using distance matrix
 HashMap<String, HashMap<String, String>> clusters = new HashMap<>()
 for (u in users) {
-    if(u != null) {
+    if (u != null) {
         clusters[u.id] = [u]
     }
 }
@@ -207,7 +261,7 @@ while (mergeClosestClusters(clusters, distances)) {
 // in distance matrix of cluster we sum-up each row
 // and find user with minimal value
 
-result = [clusters: [], clusters_count: clusters.size(), clusters_users_count: 0, times: [time1], counters: [users.size(),distanceCalculations]]
+result = [clusters: [], clusters_count: clusters.size(), clusters_users_count: 0, times: [distances: timeDistances, psa: timePSA], counters: [usersSize: users.size(), distanceCalculations: distanceCalculations], debug: []]
 for (cluster in clusters) {
     clusterSize = cluster.value.size()
     cluster.value[0]['pathHash'] = cluster.value[0].path.join().bytes.encodeBase64().toString()

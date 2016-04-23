@@ -25,6 +25,7 @@ function storageInit() {
 
 function storageSearch(interval, callback) {
     storageClient.search({
+        requestTimeout: 100000,
         index: 'logstash-2015.06.03',
         body: {
             "size": 0,
