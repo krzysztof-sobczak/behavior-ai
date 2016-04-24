@@ -2,11 +2,11 @@
 // ------------------------------------------
 
 var stageWidth = 600;
-var stageHeight = 650;
+var stageHeight = 1800;
 var stageSvg = null;
 
 function visualizationInit() {
-    var margin = {top: 20, right: 200, bottom: 0, left: 20};
+    var margin = {top: 20, right: 300, bottom: 0, left: 20};
 
     stageSvg = d3.select("body").append("svg")
         .attr("width", stageWidth + margin.left + margin.right)
@@ -142,7 +142,7 @@ var visualize = function visualize(interval, data) {
             .attr("y", j * 30 + 25)
             .attr("x", stageWidth + 20)
             .attr("class", "label")
-            .text(truncate(data[j]['name'], 30, "..."))
+            .text(truncate(data[j]['name'], 60, "..."))
             .style("fill", function (d) {
                 return c(j);
             })
