@@ -2,6 +2,15 @@ import groovy.transform.Memoized
 //import static groovyx.gpars.GParsPool.withPool
 
 // ------ MOCKS START
+if (!binding.variables.containsKey('path_limit')) {
+    path_limit = 10
+}
+if (!binding.variables.containsKey('shard_size')) {
+    shard_size = 30
+}
+if (!binding.variables.containsKey('treshold')) {
+    treshold = 69
+}
 if (!binding.variables.containsKey('_aggs')) {
     _aggs = [
             [
@@ -372,7 +381,7 @@ class Cluster {
             for (user2 in this.users) {
                 userDistanceSum = userDistanceSum + PSA.calculatePsaScore(user1.path, user2.path);
             }
-            if (userDistanceSum < representantDistanceSum) {
+            if (userDistanceSum > representantDistanceSum) {
                 representant = user1;
                 representantDistanceSum = userDistanceSum;
             }
@@ -409,6 +418,9 @@ for (u in mergedUserSessions) {
     path = [];
     for (pathItem in u.value.path) {
         path.add(pathItem.item)
+        if(path.size() >= path_limit) {
+            break;
+        }
     }
     user = u.value;
     user.path = path;
@@ -478,7 +490,7 @@ def mergeClustersWithSharding = { _clusters, _shardSize, _treshold ->
 //println(clusters);
 initialSize = clusters.size();
 mergingWithShardingTime = System.currentTimeMillis()
-clusters = mergeClustersWithSharding(clusters, 30, 49);
+clusters = mergeClustersWithSharding(clusters, shard_size, treshold);
 mergingWithShardingTime = (System.currentTimeMillis() - mergingWithShardingTime)
 
 result = [clusters: [], clusters_count: clusters.size(), clusters_users_count: 0, debug: [initial: initialSize, initTime: initTime, mergingWithShardingTime: mergingWithShardingTime, shardingTime: shardingTime, mergingTime: mergingTime]]

@@ -23,7 +23,7 @@ function storageInit() {
     });
 }
 
-function storageSearch(interval, callback) {
+function storageSearch(interval, path_limit, shard_size, treshold, callback) {
     storageClient.search({
         requestTimeout: 100000,
         index: 'logstash-2015.06.03',
@@ -55,7 +55,12 @@ function storageSearch(interval, callback) {
                                 },
                                 "reduce_script": {
                                     "lang": "groovy",
-                                    "file": "psa-clustering_reduce"
+                                    "file": "psa-clustering_reduce",
+                                    "params": {
+                                        "path_limit": path_limit,
+                                        "shard_size": shard_size,
+                                        "treshold": treshold
+                                    }
                                 }
                             }
                         }
