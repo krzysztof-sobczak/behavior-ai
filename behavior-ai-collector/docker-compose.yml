@@ -6,5 +6,4 @@ logstash:
   command: logstash -f /data/logstash/config/* --debug
   external_links:
     - behavioraistorage_elasticsearch_1:storage.behavior-ai.com
-  logging:
-    driver: none
+  log_driver: none
