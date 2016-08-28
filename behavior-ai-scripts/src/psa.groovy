@@ -52,7 +52,7 @@ def calculate_sequences_score_psa = { ArrayList sequence1, ArrayList sequence2 -
     seq1len = sequence1.size()
     seq2len = sequence2.size()
 
-    semiglobalMode = isSemiglobal(seq1len, seq2len)
+    semiglobalMode = false
 
     // create PSA table
     psaTable = createPSA(seq1len, seq2len);
@@ -80,6 +80,9 @@ def calculate_sequences_score_psa = { ArrayList sequence1, ArrayList sequence2 -
     optimalMoveValue = psaTable[seq1len][seq2len]
 
     maxScore = Math.min(seq1len, seq2len)
+    normalize = seq1len + seq2len
+    optimalMoveValue = optimalMoveValue + normalize
+    maxScore = maxScore + normalize
     scaledScore = Math.round(optimalMoveValue / maxScore * 100)
 
     return scaledScore

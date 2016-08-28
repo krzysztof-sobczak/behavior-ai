@@ -1,7 +1,7 @@
 // ELASTICSEARCH
 // -------------------------
 
-var storageHost = 'http://storage.behaviorai.docker:9200';
+var storageHost = 'http://localhost:9200';
 var storageClient = null;
 
 function storageInit() {
@@ -25,13 +25,29 @@ function storageInit() {
 
 function storageSearch(interval, path_limit, shard_size, treshold, callback) {
     storageClient.search({
-        requestTimeout: 100000,
-        index: 'logstash-2015.06.03',
+        requestTimeout: 700000,
+        index: 'logstash-*',
         body: {
             "size": 0,
             "query": {
-                "match_all": {}
-            },
+                "filtered": {
+                  "filter": {
+                    "bool": {
+                      "must": [
+                        {
+                          "range": {
+                            "timestamp": {
+                              "gte": "2015-06-15 09:00:00",
+                                "lte": "2015-06-18 12:00:00",
+                                "format": "yyyy-MM-dd HH:mm:ss"
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  }
+                }
+              },
             "aggs": {
                 "timeframes": {
                     "date_histogram": {

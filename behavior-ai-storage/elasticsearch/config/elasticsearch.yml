@@ -3,3 +3,4 @@ script.inline: true
 script.indexed: true
 http.cors.enabled: true
 http.cors.allow-origin: "*"
+cluster.routing.allocation.disk.threshold_enabled: false

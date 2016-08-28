@@ -6,7 +6,7 @@ if (!binding.variables.containsKey('path_limit')) {
     path_limit = 10
 }
 if (!binding.variables.containsKey('shard_size')) {
-    shard_size = 30
+    shard_size = 2
 }
 if (!binding.variables.containsKey('treshold')) {
     treshold = 69
@@ -322,7 +322,7 @@ class PSA {
         def seq2len = sequence2.size()
 
 //    semiglobalMode = isSemiglobal(seq1len, seq2len)
-        def semiglobalMode = true
+        def semiglobalMode = false
 
         // create PSA table
         def psaTable = createPSA(seq1len, seq2len, semiglobalMode);
@@ -349,6 +349,9 @@ class PSA {
         def optimalMoveValue = psaTable[seq1len][seq2len]
 
         def maxScore = Math.min(seq1len, seq2len)
+        def normalize = seq1len + seq2len
+        optimalMoveValue = optimalMoveValue + normalize
+        maxScore = maxScore + normalize
         def scaledScore = Math.round(optimalMoveValue / maxScore * 100)
 
         return scaledScore
@@ -381,7 +384,7 @@ class Cluster {
             for (user2 in this.users) {
                 userDistanceSum = userDistanceSum + PSA.calculatePsaScore(user1.path, user2.path);
             }
-            if (userDistanceSum > representantDistanceSum) {
+            if (userDistanceSum >= representantDistanceSum && user1.path.size() > representant.path.size()) {
                 representant = user1;
                 representantDistanceSum = userDistanceSum;
             }
@@ -453,6 +456,7 @@ def mergeClusters = { _clusters, _treshold ->
 shardingTime = 0;
 def mergeClustersWithSharding = { _clusters, _shardSize, _treshold ->
     def boolean mergePossible = true;
+    def boolean extendShardToWholeSet = false;
     while (mergePossible) {
         startSharding = System.currentTimeMillis();
         // make shards
@@ -482,6 +486,12 @@ def mergeClustersWithSharding = { _clusters, _shardSize, _treshold ->
         shardingTime = shardingTime + (System.currentTimeMillis() - startSharding);
 //        println(results)
         mergePossible = (boolean) (results.size() < _clusters.size());
+        // when finished merging in shards then try to merge on whole set
+        if (!mergePossible && !extendShardToWholeSet) {
+            _shardSize=results.size();
+            extendShardToWholeSet = true;
+            mergePossible = true;
+        }
         _clusters = results;
     }
     return _clusters;
@@ -502,5 +512,6 @@ for (cluster in clusters) {
     ]]);
     result.clusters_users_count += clusterSize
 }
-//println(result)
+result.clusters.sort{a,b-> b.size<=>a.size}
+println(result)
 return result;

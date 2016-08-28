@@ -1,8 +1,8 @@
 // VISUALIZATION
 // ------------------------------------------
 
-var stageWidth = 600;
-var stageHeight = 1800;
+var stageWidth = 1600;
+var stageHeight = 12000;
 var stageSvg = null;
 
 function visualizationInit() {
@@ -39,20 +39,35 @@ var visualize = function visualize(interval, data) {
             var timeframe = [
                 timeframeData['timeframe_start'],
                 timeframeData['timeframe_end'],
-                cluster['size']
+                cluster['size'],
+                timeframeData['behaviors']['value']['clusters_users_count']
             ];
-            var representant = cluster['representants'][0];
-            if (clusterList.hasOwnProperty(representant.pathHash)) {
-                clusterList[representant.pathHash].timeframes.push(timeframe)
-            } else {
-                clusterList[representant.pathHash] = {
-                    "timeframes": [
-                        timeframe
-                    ],
-                    "name": representant['path'].join(', ')
+            if(Math.round((timeframe[2]/timeframe[3])*10000)/100 > 1) {
+                var representant = cluster['representants'][0];
+                if (clusterList.hasOwnProperty(representant.pathHash)) {
+                    clusterList[representant.pathHash].timeframes.push(timeframe)
+                } else {
+                    clusterList[representant.pathHash] = {
+                        "timeframes": [
+                            timeframe
+                        ],
+                        "name": representant['path'].join(', ')
+                    }
                 }
             }
         });
+    });
+    clusterList = clusterList.sort(function(a, b) {
+        console.log("sorting");
+        var aSum = a.timeframes.reduce( function(prev, next){
+           return prev + next[2];
+        }, 0);
+        var bSum = b.timeframes.reduce( function(prev, next){
+           return prev + next[2];
+        }, 0);
+        console.log(a.name + ": " + aSum);
+        console.log(b.name + ": " + bSum);
+        return parseFloat(aSum) - parseFloat(bSum);
     });
     data = [];
     for (var key in clusterList) {
@@ -108,9 +123,9 @@ var visualize = function visualize(interval, data) {
 
         var rScale = d3.scale.linear()
             .domain([0, d3.max(data[j]['timeframes'], function (d) {
-                return d[2];
+                return d[3];
             })])
-            .range([2, 12]);
+            .range([6, 14]);
 
         circles
             .attr("cx", function (d, i) {
@@ -131,7 +146,7 @@ var visualize = function visualize(interval, data) {
             })
             .attr("class", "value")
             .text(function (d) {
-                return d[2];
+                return (Math.round((d[2]/d[3])*10000)/100)+"%";
             })
             .style("fill", function (d) {
                 return c(j);
@@ -140,7 +155,7 @@ var visualize = function visualize(interval, data) {
 
         g.append("text")
             .attr("y", j * 30 + 25)
-            .attr("x", stageWidth + 20)
+            .attr("x", stageWidth + 50)
             .attr("class", "label")
             .text(truncate(data[j]['name'], 60, "..."))
             .style("fill", function (d) {

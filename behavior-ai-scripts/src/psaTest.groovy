@@ -25,7 +25,7 @@ class psaTest extends GroovyTestCase {
     public Object[][] createTestData() {
         List<Object[]> refdata = new ArrayList<>()
 //        refdata.add([["A","A","B","A","A","A","B","A","A","A","B","A"], ["A","C","C","B","C","A","A","C","C","B","C","A","A","C","C","B","C","A"], 6L])
-        refdata.add([["A","A"], ["A","A", "A", "A"], 6L])
+        refdata.add([["A","B"], ["A"], 6L])
 //        refdata.add([["A","A","B","A"], ["A","C","C","B","C","A"], 17L])
 //        refdata.add([["A","A","B","A"], ["A","A","B","A"], 100L])
 //        refdata.add([["A","B"], ["A","A","B","A"], 50L])

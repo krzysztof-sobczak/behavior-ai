@@ -1,3 +1,11 @@
 INBOX (.*)/inbox.php
 PRODUCT (.*)/product/
-API_ME /api/me
+REPORT (.*)/report
+SEARCH (.*)/search
+MAINTENANCE /templates/static_html/maintenance.html
+CART /api/me/cart
+CHECKOUT (.*)/checkout
+CONTACT (.*)/contact
+LOGIN (.*)/api/me/login
+REGISTER (.*)/api/me/register
+INVITE (.*)/i/invite
