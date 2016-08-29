@@ -7,3 +7,5 @@ logstash:
   external_links:
     - behavioraistorage_elasticsearch_1:storage.behavior-ai.com
   log_driver: none
+  ports:
+    - 8080:8080
