@@ -9,3 +9,13 @@ CONTACT (.*)/contact
 LOGIN (.*)/api/me/login
 REGISTER (.*)/api/me/register
 INVITE (.*)/i/invite
+
+CAT_DENEWS /denews/(.*)
+CAT_SPOTKANIA /spotkania/(.*)
+CAT_MULTIMEDIA /multimedia/(.*)
+CAT_GALERIA /galeria/(.*)
+CAT_ARTYKULY /artykuly/(.*)
+FILTER_TAG /tag/(.*)
+FILTER_AUTHOR /author/(.*)
+FILTER_CALENDAR /([0-9]+)/([0-9]+)/([0-9]+)
+ONASDOJAZD /o-nas-dojazd/
