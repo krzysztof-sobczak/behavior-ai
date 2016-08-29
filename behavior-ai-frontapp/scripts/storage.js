@@ -37,8 +37,8 @@ function storageSearch(interval, path_limit, shard_size, treshold, callback) {
                         {
                           "range": {
                             "timestamp": {
-                              "gte": "2015-06-15 09:00:00",
-                                "lte": "2015-06-18 12:00:00",
+                              "gte": "2016-08-28 09:00:00",
+                                "lte": "2016-08-31 12:00:00",
                                 "format": "yyyy-MM-dd HH:mm:ss"
                             }
                           }
