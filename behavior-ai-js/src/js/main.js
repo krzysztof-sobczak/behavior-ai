@@ -1,7 +1,3 @@
-$(document).ready(function() {
-    pushTrackingData();
-});
-
 function getTrackingId()
 {
     var trackingCookieName = 'behavior-ai-session';
@@ -13,7 +9,7 @@ function getTrackingId()
     return trackingCookieValue;
 }
 
-function pushTrackingData()
+function pushTrackingData(host)
 {
     var trackingId = getTrackingId();
     var data = {
@@ -29,7 +25,7 @@ function pushTrackingData()
     var settings = {
       "async": true,
       "crossDomain": true,
-      "url": "http://localhost:8080/",
+      "url": host,
       "method": "PUT",
       "headers": {
         "content-type": "application/json"
