@@ -10,6 +10,7 @@ LOGIN (.*)/api/me/login
 REGISTER (.*)/api/me/register
 INVITE (.*)/i/invite
 
+HOME /
 CAT_DENEWS /denews/(.*)
 CAT_SPOTKANIA /spotkania/(.*)
 CAT_MULTIMEDIA /multimedia/(.*)
