@@ -78,14 +78,10 @@ var visualize = function visualize(interval, data) {
                 for (var key in clusterList) {
                     cluster = clusterList[key];
                     if(path.length > cluster.path.length && name.indexOf(cluster.name) !== -1) {
-                        console.log("boosting '" + cluster.name + "' with '" + name + "' -> +"+timeframe[2]);
                         var found = false;
                         for (var timeframeKey in cluster.timeframes) {
-                            console.log('checking' + cluster.timeframes[timeframeKey][0].getTime() + ' vs ' + timeframe[0].getTime() + ' -> ');
-                            console.log(cluster.timeframes[timeframeKey][0].getTime() == timeframe[0].getTime());
                             if(cluster.timeframes[timeframeKey][0].getTime() == timeframe[0].getTime() && cluster.timeframes[timeframeKey][1].getTime() == timeframe[1].getTime()) {
                                 cluster.timeframes[timeframeKey][2] = cluster.timeframes[timeframeKey][2] + timeframe[2];
-                                console.log('add to timeframe');
                                 found = true;
                             }
                         }
