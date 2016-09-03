@@ -78,25 +78,19 @@ var visualize = function visualize(interval, data) {
                 for (var key in clusterList) {
                     cluster = clusterList[key];
                     if(path.length > cluster.path.length && name.indexOf(cluster.name) !== -1) {
-                        var found = false;
+                        var timeFrameIndex = null;
                         for (var timeframeKey in cluster.timeframes) {
                             if(cluster.timeframes[timeframeKey][0].getTime() == timeframe[0].getTime() && cluster.timeframes[timeframeKey][1].getTime() == timeframe[1].getTime()) {
-                                console.log("boost " + cluster.name + "("+cluster.timeframes[timeframeKey][2]+") with " + name + " by " + timeframe[2] + " on " + timeframe[0]);
-                                cluster.timeframes[timeframeKey][2] += timeframe[2];
-                                console.log("got " + cluster.timeframes[timeframeKey][2]);
-                                found = true;
+                                timeFrameIndex = timeframeKey;
                                 break;
                             }
                         }
-                        if(!found) {
-                            console.log("boost " + cluster.name + " with " + name + " by " + timeframe[2] + " on " + timeframe[0]);
+                        if(timeFrameIndex == null) {
+                            console.log("[new timeframe] boost " + cluster.name + " with " + name + " by " + timeframe[2] + " on " + timeframe[0]);
                             clusterList[key].timeframes.push(timeframe);
-                            for (var timeframeKey in cluster.timeframes) {
-                                if(cluster.timeframes[timeframeKey][0].getTime() == timeframe[0].getTime() && cluster.timeframes[timeframeKey][1].getTime() == timeframe[1].getTime()) {
-                                    console.log("got " + cluster.timeframes[timeframeKey][2]);
-                                    break;
-                                }
-                            }
+                        } else {
+                            console.log("[existing timeframe] boost " + cluster.name + "("+cluster.timeframes[timeFrameIndex][2]+") with " + name + " by " + timeframe[2] + " on " + timeframe[0]);
+                            cluster.timeframes[timeFrameIndex][2] += timeframe[2];
                         }
                     }
                 }
