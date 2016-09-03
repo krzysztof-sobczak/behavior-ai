@@ -80,9 +80,9 @@ var visualize = function visualize(interval, data) {
                     if(path.length > cluster.path.length && name.indexOf(cluster.name) !== -1) {
                         console.log("boosting '" + cluster.name + "' with '" + name + "' -> +"+timeframe[2]);
                         var found = false;
-                        clusterList[key].timeframes.forEach(function(clusterTimeFrame) {
-                            if(clusterTimeFrame[0] == timeframe[0] && clusterTimeFrame[1] == timeframe[1]) {
-                                clusterTimeFrame[2] = clusterTimeFrame[2] + timeframe[2];
+                        for (var timeframeKey in cluster.timeframes) {
+                            if(cluster.timeframes[timeframeKey][0] == timeframe[0] && cluster.timeframes[timeframeKey][1] == timeframe[1]) {
+                                cluster.timeframes[timeframeKey][2] = cluster.timeframes[timeframeKey][2] + timeframe[2];
                                 console.log('add to timeframe');
                                 found = true;
                             }
