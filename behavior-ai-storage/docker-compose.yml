@@ -9,5 +9,5 @@ elasticsearch:
     - 9300:9300
   command: ["elasticsearch", "--security.manager.enabled", "false"]
   environment:
-      ES_HEAP_SIZE: 2g
+#      ES_HEAP_SIZE: 2g
       VIRTUAL_HOST: storage.behaviorai.docker
