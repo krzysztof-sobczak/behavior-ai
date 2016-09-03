@@ -6,7 +6,7 @@ var stageHeight = 12000;
 var stageSvg = null;
 
 function visualizationInit() {
-    var margin = {top: 20, right: 300, bottom: 0, left: 20};
+    var margin = {top: 20, right: 500, bottom: 0, left: 20};
 
     stageSvg = d3.select("body").append("svg")
         .attr("width", stageWidth + margin.left + margin.right)
