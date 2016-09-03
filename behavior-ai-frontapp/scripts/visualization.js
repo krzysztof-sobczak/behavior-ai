@@ -82,7 +82,7 @@ var visualize = function visualize(interval, data) {
                         console.log("boosting " + cluster.name + " with " + name);
                         clusterList[representant.pathHash].timeframes.push(timeframe);
                     }
-                });
+                }
             }
         });
     });
