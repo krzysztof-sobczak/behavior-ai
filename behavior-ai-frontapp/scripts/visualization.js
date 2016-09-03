@@ -42,7 +42,8 @@ var visualize = function visualize(interval, data) {
                 cluster['size'],
                 timeframeData['behaviors']['value']['clusters_users_count']
             ];
-            if(Math.round((timeframe[2]/timeframe[3])*10000)/100 > 1) {
+            var percentValue = Math.round((timeframe[2]/timeframe[3])*10000)/100;
+            if(percentValue > 1) {
                 var representant = cluster['representants'][0];
                 if (clusterList.hasOwnProperty(representant.pathHash)) {
                     clusterList[representant.pathHash].timeframes.push(timeframe)
@@ -51,9 +52,34 @@ var visualize = function visualize(interval, data) {
                         "timeframes": [
                             timeframe
                         ],
+                        "path": representant['path'],
                         "name": representant['path'].join(', ')
                     }
                 }
+            }
+        });
+    });
+    // fill clusters between timeframes
+    data.forEach(function (timeframeData) {
+        timeframeData['timeframe_start'] = new Date(timeframeData['key']);
+        timeframeData['timeframe_end'] = new Date((timeframeData['key'] + intervalSeconds));
+        timeframeData['behaviors']['value']['clusters'].forEach(function (timeFrameCluster) {
+            var timeframe = [
+                timeframeData['timeframe_start'],
+                timeframeData['timeframe_end'],
+                timeFrameCluster['size'],
+                timeframeData['behaviors']['value']['clusters_users_count']
+            ];
+            var percentValue = Math.round((timeframe[2]/timeframe[3])*10000)/100;
+            if(percentValue > 1) {
+                var representant = timeFrameCluster['representants'][0];
+                var path = representant['path'];
+                var name = path.join(', ')
+                clusterList.forEach(function (cluster) {
+                    if(path.length > cluster.path.length && path.indexOf(cluster.name) !== -1) {
+                        clusterList[representant.pathHash].timeframes.push(timeframe);
+                    }
+                });
             }
         });
     });
