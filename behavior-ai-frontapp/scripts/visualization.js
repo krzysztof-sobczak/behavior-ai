@@ -91,6 +91,7 @@ var visualize = function visualize(interval, data) {
                         if(!found) {
                             console.log("boost " + cluster.name + " with " + name + " by " + timeframe[2] + " on " + timeframe[0]);
                             clusterList[key].timeframes.push(timeframe);
+                            console.log("got " + cluster.timeframes[timeframeKey][2]);
                         }
                     }
                 }
