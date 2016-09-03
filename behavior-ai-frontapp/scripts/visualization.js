@@ -77,9 +77,9 @@ var visualize = function visualize(interval, data) {
                 var name = path.join(', ');
                 for (var key in clusterList) {
                     cluster = clusterList[key];
-                    console.log("checking " + cluster.name + "against " + name);
+                    console.log("checking '" + cluster.name + "'("+cluster.path.length+") against '" + name + "'("+path.length+")");
                     if(path.length > cluster.path.length && name.indexOf(cluster.name) !== -1) {
-                        console.log("boosting " + cluster.name + " with " + name);
+                        console.log("boosting '" + cluster.name + "' with '" + name + "'");
                         clusterList[representant.pathHash].timeframes.push(timeframe);
                     }
                 }
