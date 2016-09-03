@@ -88,6 +88,7 @@ var visualize = function visualize(interval, data) {
                         if(!found) {
                             clusterList[key].timeframes.push(timeframe);
                         }
+                        console.log("boost " + name + " by " + timeframe[2]);
                     }
                 }
             }
