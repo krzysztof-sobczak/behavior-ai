@@ -75,7 +75,7 @@ var visualize = function visualize(interval, data) {
                 var representant = timeFrameCluster['representants'][0];
                 var path = representant['path'];
                 var name = path.join(', ')
-                console.log("second" + percentValue);
+                console.log(clusterList);
                 clusterList.forEach(function (cluster) {
                     console.log("checking " + cluster.name + "against " + name);
                     if(path.length > cluster.path.length && name.indexOf(cluster.name) !== -1) {
