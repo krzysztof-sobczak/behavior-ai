@@ -78,7 +78,7 @@ var visualize = function visualize(interval, data) {
                 for (var key in clusterList) {
                     cluster = clusterList[key];
                     console.log("checking '" + cluster.name + "'("+cluster.path.length+") against '" + name + "'("+path.length+"): result -> " + cluster.name.indexOf(name));
-                    if(cluster.path.length > path.length && cluster.name.indexOf(name) !== -1) {
+                    if(path.length > cluster.path.length && name.indexOf(cluster.name) !== -1) {
                         console.log("boosting '" + cluster.name + "' with '" + name + "'");
                         clusterList[representant.pathHash].timeframes.push(timeframe);
                     }
