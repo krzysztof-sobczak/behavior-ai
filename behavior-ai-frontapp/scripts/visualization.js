@@ -59,7 +59,6 @@ var visualize = function visualize(interval, data) {
             }
         });
     });
-    console.log(clusterList);
     // fill clusters between timeframes
     data.forEach(function (timeframeData) {
         timeframeData['timeframe_start'] = new Date(timeframeData['key']);
@@ -84,6 +83,7 @@ var visualize = function visualize(interval, data) {
                             if(cluster.timeframes[timeframeKey][0].getTime() == timeframe[0].getTime() && cluster.timeframes[timeframeKey][1].getTime() == timeframe[1].getTime()) {
                                 console.log("boost " + cluster.name + "("+cluster.timeframes[timeframeKey][2]+") with " + name + " by " + timeframe[2] + " on " + timeframe[0]);
                                 cluster.timeframes[timeframeKey][2] += timeframe[2];
+                                console.log("got " + cluster.timeframes[timeframeKey][2]);
                                 found = true;
                                 break;
                             }
