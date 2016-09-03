@@ -89,9 +89,9 @@ var visualize = function visualize(interval, data) {
                                 found = true;
                             }
                         }
-//                        if(!found) {
-//                            clusterList[key].timeframes.push(timeframe);
-//                        }
+                        if(!found) {
+                            clusterList[key].timeframes.push(timeframe);
+                        }
                     }
                 }
             }
