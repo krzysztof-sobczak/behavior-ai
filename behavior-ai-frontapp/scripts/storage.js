@@ -37,9 +37,18 @@ function storageSearch(interval, path_limit, shard_size, treshold, callback) {
                         {
                           "range": {
                             "timestamp": {
-                              "gte": "2016-08-28 09:00:00",
-                                "lte": "2016-08-31 12:00:00",
+                              "gte": "2016-08-26 08:00:00",
+                                "lte": "2016-09-05 09:59:59",
                                 "format": "yyyy-MM-dd HH:mm:ss"
+                            }
+                          }
+                        },
+                        {
+                          "script": {
+                            "script": "doc.timestamp.date.getHourOfDay() >= min && doc.timestamp.date.getHourOfDay() <= max",
+                            "params": {
+                              "min": 8,
+                              "max": 10
                             }
                           }
                         }
