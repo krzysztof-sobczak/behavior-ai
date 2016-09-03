@@ -81,6 +81,7 @@ var visualize = function visualize(interval, data) {
                         console.log("boosting '" + cluster.name + "' with '" + name + "' -> +"+timeframe[2]);
                         var found = false;
                         for (var timeframeKey in cluster.timeframes) {
+                            console.log('checking' + cluster.timeframes[timeframeKey][0] + '-' + cluster.timeframes[timeframeKey][1]);
                             if(cluster.timeframes[timeframeKey][0] == timeframe[0] && cluster.timeframes[timeframeKey][1] == timeframe[1]) {
                                 cluster.timeframes[timeframeKey][2] = cluster.timeframes[timeframeKey][2] + timeframe[2];
                                 console.log('add to timeframe');
