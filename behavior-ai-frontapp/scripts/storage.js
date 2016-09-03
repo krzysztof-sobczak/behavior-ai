@@ -1,7 +1,7 @@
 // ELASTICSEARCH
 // -------------------------
 
-var storageHost = 'http://localhost:9200';
+var storageHost = 'http://52.16.0.182:9200';
 var storageClient = null;
 
 function storageInit() {
