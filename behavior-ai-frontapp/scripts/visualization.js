@@ -43,6 +43,7 @@ var visualize = function visualize(interval, data) {
                 timeframeData['behaviors']['value']['clusters_users_count']
             ];
             var percentValue = Math.round((timeframe[2]/timeframe[3])*10000)/100;
+            console.log("first" + percentValue);
             if(percentValue > 1) {
                 var representant = cluster['representants'][0];
                 if (clusterList.hasOwnProperty(representant.pathHash)) {
@@ -64,7 +65,6 @@ var visualize = function visualize(interval, data) {
         timeframeData['timeframe_start'] = new Date(timeframeData['key']);
         timeframeData['timeframe_end'] = new Date((timeframeData['key'] + intervalSeconds));
         timeframeData['behaviors']['value']['clusters'].forEach(function (timeFrameCluster) {
-            console.log("checking ");
             var timeframe = [
                 timeframeData['timeframe_start'],
                 timeframeData['timeframe_end'],
@@ -72,6 +72,7 @@ var visualize = function visualize(interval, data) {
                 timeframeData['behaviors']['value']['clusters_users_count']
             ];
             var percentValue = Math.round((timeframe[2]/timeframe[3])*10000)/100;
+            console.log("second" + percentValue);
             if(percentValue > 1) {
                 var representant = timeFrameCluster['representants'][0];
                 var path = representant['path'];
