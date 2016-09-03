@@ -83,6 +83,7 @@ var visualize = function visualize(interval, data) {
                         clusterList[key].timeframes.forEach(function(clusterTimeFrame) {
                             if(clusterTimeFrame[0] == timeframe[0] && clusterTimeFrame[1] == timeframe[1]) {
                                 clusterTimeFrame[2] = clusterTimeFrame[2] + timeframe[2];
+                                console.log('add to timeframe');
                                 found = true;
                             }
                         })
