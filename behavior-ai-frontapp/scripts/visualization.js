@@ -86,7 +86,7 @@ var visualize = function visualize(interval, data) {
                                 console.log('add to timeframe');
                                 found = true;
                             }
-                        })
+                        }
 //                        if(!found) {
 //                            clusterList[key].timeframes.push(timeframe);
 //                        }
