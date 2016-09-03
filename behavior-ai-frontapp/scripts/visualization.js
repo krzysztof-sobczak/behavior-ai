@@ -79,7 +79,7 @@ var visualize = function visualize(interval, data) {
                     cluster = clusterList[key];
                     if(path.length > cluster.path.length && name.indexOf(cluster.name) !== -1) {
                         console.log("boosting '" + cluster.name + "' with '" + name + "' -> +"+timeframe[2]);
-                        clusterList[representant.pathHash].timeframes.push(timeframe);
+                        clusterList[key].timeframes.push(timeframe);
                     }
                 }
             }
