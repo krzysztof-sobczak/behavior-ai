@@ -83,12 +83,12 @@ var visualize = function visualize(interval, data) {
                         for (var timeframeKey in cluster.timeframes) {
                             if(cluster.timeframes[timeframeKey][0].getTime() == timeframe[0].getTime() && cluster.timeframes[timeframeKey][1].getTime() == timeframe[1].getTime()) {
                                 cluster.timeframes[timeframeKey][2] = cluster.timeframes[timeframeKey][2] + timeframe[2];
-                                console.log("boost " + cluster.name + "("+cluster.timeframes[timeframeKey][2]+") with " + name + " by " + timeframe[2] + " on " + timeframe[0]);
+//                                console.log("boost " + cluster.name + "("+cluster.timeframes[timeframeKey][2]+") with " + name + " by " + timeframe[2] + " on " + timeframe[0]);
                                 found = true;
                             }
                         }
                         if(!found) {
-                        console.log("boost " + cluster.name + " with " + name + " by " + timeframe[2] + " on " + timeframe[0]);
+                            console.log("boost " + cluster.name + " with " + name + " by " + timeframe[2] + " on " + timeframe[0]);
                             clusterList[key].timeframes.push(timeframe);
                         }
                     }
