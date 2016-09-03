@@ -76,6 +76,7 @@ var visualize = function visualize(interval, data) {
                 var path = representant['path'];
                 var name = path.join(', ')
                 clusterList.forEach(function (cluster) {
+                    console.log("checking " + cluster.name + "against " + name);
                     if(path.length > cluster.path.length && name.indexOf(cluster.name) !== -1) {
                         console.log("boosting " + cluster.name + " with " + name);
                         clusterList[representant.pathHash].timeframes.push(timeframe);
