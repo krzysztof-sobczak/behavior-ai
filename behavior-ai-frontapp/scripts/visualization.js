@@ -61,40 +61,40 @@ var visualize = function visualize(interval, data) {
     });
     console.log(clusterList);
     // fill clusters between timeframes
-    data.forEach(function (timeframeData) {
-        timeframeData['timeframe_start'] = new Date(timeframeData['key']);
-        timeframeData['timeframe_end'] = new Date((timeframeData['key'] + intervalSeconds));
-        timeframeData['behaviors']['value']['clusters'].forEach(function (timeFrameCluster) {
-            var timeframe = [
-                timeframeData['timeframe_start'],
-                timeframeData['timeframe_end'],
-                timeFrameCluster['size'],
-                timeframeData['behaviors']['value']['clusters_users_count']
-            ];
-            var percentValue = Math.round((timeframe[2]/timeframe[3])*10000)/100;
-            if(percentValue > 1) {
-                var representant = timeFrameCluster['representants'][0];
-                var path = representant['path'];
-                var name = path.join(', ');
-                for (var key in clusterList) {
-                    cluster = clusterList[key];
-                    if(path.length > cluster.path.length && name.indexOf(cluster.name) !== -1) {
-                        var found = false;
-                        for (var timeframeKey in cluster.timeframes) {
-                            if(cluster.timeframes[timeframeKey][0].getTime() == timeframe[0].getTime() && cluster.timeframes[timeframeKey][1].getTime() == timeframe[1].getTime()) {
-                                cluster.timeframes[timeframeKey][2] = cluster.timeframes[timeframeKey][2] + timeframe[2];
-                                found = true;
-                            }
-                        }
-                        if(!found) {
-                            clusterList[key].timeframes.push(timeframe);
-                        }
-                        console.log("boost " + cluster.name + " with " + name + " by " + timeframe[2]);
-                    }
-                }
-            }
-        });
-    });
+//    data.forEach(function (timeframeData) {
+//        timeframeData['timeframe_start'] = new Date(timeframeData['key']);
+//        timeframeData['timeframe_end'] = new Date((timeframeData['key'] + intervalSeconds));
+//        timeframeData['behaviors']['value']['clusters'].forEach(function (timeFrameCluster) {
+//            var timeframe = [
+//                timeframeData['timeframe_start'],
+//                timeframeData['timeframe_end'],
+//                timeFrameCluster['size'],
+//                timeframeData['behaviors']['value']['clusters_users_count']
+//            ];
+//            var percentValue = Math.round((timeframe[2]/timeframe[3])*10000)/100;
+//            if(percentValue > 1) {
+//                var representant = timeFrameCluster['representants'][0];
+//                var path = representant['path'];
+//                var name = path.join(', ');
+//                for (var key in clusterList) {
+//                    cluster = clusterList[key];
+//                    if(path.length > cluster.path.length && name.indexOf(cluster.name) !== -1) {
+//                        var found = false;
+//                        for (var timeframeKey in cluster.timeframes) {
+//                            if(cluster.timeframes[timeframeKey][0].getTime() == timeframe[0].getTime() && cluster.timeframes[timeframeKey][1].getTime() == timeframe[1].getTime()) {
+//                                cluster.timeframes[timeframeKey][2] = cluster.timeframes[timeframeKey][2] + timeframe[2];
+//                                found = true;
+//                            }
+//                        }
+//                        if(!found) {
+//                            clusterList[key].timeframes.push(timeframe);
+//                        }
+//                        console.log("boost " + cluster.name + " with " + name + " by " + timeframe[2]);
+//                    }
+//                }
+//            }
+//        });
+//    });
     clusterList = clusterList.sort(function(a, b) {
         console.log("sorting");
         var aSum = a.timeframes.reduce( function(prev, next){
