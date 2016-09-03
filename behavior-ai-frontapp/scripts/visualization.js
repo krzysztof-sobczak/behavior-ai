@@ -64,6 +64,7 @@ var visualize = function visualize(interval, data) {
         timeframeData['timeframe_start'] = new Date(timeframeData['key']);
         timeframeData['timeframe_end'] = new Date((timeframeData['key'] + intervalSeconds));
         timeframeData['behaviors']['value']['clusters'].forEach(function (timeFrameCluster) {
+            console.log("checking ");
             var timeframe = [
                 timeframeData['timeframe_start'],
                 timeframeData['timeframe_end'],
