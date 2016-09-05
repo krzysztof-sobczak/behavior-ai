@@ -1,7 +1,7 @@
 // ELASTICSEARCH
 // -------------------------
 
-var storageHost = 'http://52.16.0.182:9200';
+var storageHost = 'http://localhost:9200';
 var storageClient = null;
 
 function storageInit() {
@@ -23,7 +23,7 @@ function storageInit() {
     });
 }
 
-function storageSearch(interval, path_limit, shard_size, treshold, callback) {
+function storageSearch(start_time, end_time, interval, path_limit, shard_size, treshold, callback) {
     storageClient.search({
         requestTimeout: 700000,
         index: 'logstash-*',
@@ -36,12 +36,12 @@ function storageSearch(interval, path_limit, shard_size, treshold, callback) {
                       "must": [
                         {
                            "range": {
-                                          "timestamp": {
-                                            "gte": "2016-09-04 12:30:00",
-                                            "lte": "2016-09-04 15:30:00",
-                                            "format": "yyyy-MM-dd HH:mm:ss"
-                                          }
-                                        }
+                              "timestamp": {
+                                "gte": start_time,
+                                "lte": end_time,
+                                "format": "yyyy-MM-dd HH:mm:ss"
+                              }
+                            }
                         }
                       ]
                     }
