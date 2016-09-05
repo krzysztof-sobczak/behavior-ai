@@ -35,13 +35,13 @@ function storageSearch(interval, path_limit, shard_size, treshold, callback) {
                     "bool": {
                       "must": [
                         {
-                          "range": {
-                            "timestamp": {
-                              "gte": "2016-08-31 00:00:00",
-                                "lte": "2016-09-05 07:59:59",
-                                "format": "yyyy-MM-dd HH:mm:ss"
-                            }
-                          }
+                           "range": {
+                                          "timestamp": {
+                                            "gte": "2016-09-04 12:30:00",
+                                            "lte": "2016-09-04 15:30:00",
+                                            "format": "yyyy-MM-dd HH:mm:ss"
+                                          }
+                                        }
                         }
                       ]
                     }

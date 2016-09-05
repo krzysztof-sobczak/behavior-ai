@@ -98,7 +98,6 @@ var visualize = function visualize(interval, data) {
         });
     });
     clusterList = clusterList.sort(function(a, b) {
-        console.log("sorting");
         var aSum = a.timeframes.reduce( function(prev, next){
            return prev + next[2];
         }, 0);
