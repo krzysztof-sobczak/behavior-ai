@@ -30,11 +30,13 @@ var visualize = function visualize(interval, data) {
     }
 
     data = data['aggregations']['timeframes']['buckets'];
+    var timeframesData = [];
     var timeframesCount = data.length - 1;
     var clusterList = [];
     data.forEach(function (timeframeData) {
         timeframeData['timeframe_start'] = new Date(timeframeData['key']);
         timeframeData['timeframe_end'] = new Date((timeframeData['key'] + intervalSeconds));
+        timeframesData.push(timeframeData);
         timeframeData['behaviors']['value']['clusters'].forEach(function (cluster) {
             var timeframe = [
                 timeframeData['timeframe_start'],
@@ -51,7 +53,8 @@ var visualize = function visualize(interval, data) {
                         timeframe
                     ],
                     "path": representant['path'],
-                    "name": representant['path'].join(', ')
+                    "name": representant['path'].join(', '),
+                    "anomaly_level": 0,
                 }
             }
         });
@@ -61,37 +64,38 @@ var visualize = function visualize(interval, data) {
         timeframeData['timeframe_start'] = new Date(timeframeData['key']);
         timeframeData['timeframe_end'] = new Date((timeframeData['key'] + intervalSeconds));
         timeframeData['behaviors']['value']['clusters'].forEach(function (timeFrameCluster) {
-            var representant = timeFrameCluster['representants'][0];
-            var path = representant['path'];
-            var name = path.join(', ');
-            for (var key in clusterList) {
-                var timeframe = [
-                    timeframeData['timeframe_start'],
-                    timeframeData['timeframe_end'],
-                    timeFrameCluster['size'],
-                    timeframeData['behaviors']['value']['clusters_users_count']
-                ];
-                cluster = clusterList[key];
-                var modifier = 0;
-                if(path.length > cluster.path.length && name.indexOf(cluster.name) !== -1) {
-                      modifier = timeframe[2];
-                }
-                var timeFrameIndex = null;
-                for (var timeframeKey in cluster.timeframes) {
-                    if(cluster.timeframes[timeframeKey][0].getTime() == timeframe[0].getTime() && cluster.timeframes[timeframeKey][1].getTime() == timeframe[1].getTime()) {
-                        timeFrameIndex = timeframeKey;
-                        break;
-                    }
-                }
-                if(timeFrameIndex == null) {
-                    timeframe[2] = modifier;
-//                            console.log("[new timeframe] boost " + cluster.name + " with " + name + " by " + timeframe[2] + " on " + timeframe[0]);
-                    clusterList[key].timeframes.push(timeframe);
-                } else {
-//                            console.log("[existing timeframe] boost " + cluster.name + "("+cluster.timeframes[timeFrameIndex][2]+") with " + name + " by " + timeframe[2] + " on " + timeframe[0]);
-                    cluster.timeframes[timeFrameIndex][2] += modifier;
+        var representant = timeFrameCluster['representants'][0];
+        var path = representant['path'];
+        var name = path.join(', ');
+        for (var key in clusterList) {
+            var timeframe = [
+                timeframeData['timeframe_start'],
+                timeframeData['timeframe_end'],
+                timeFrameCluster['size'],
+                timeframeData['behaviors']['value']['clusters_users_count']
+            ];
+            cluster = clusterList[key];
+            var modifier = 0;
+            if(path.length > cluster.path.length && name.indexOf(cluster.name) !== -1) {
+                  modifier = timeframe[2];
+            }
+            var timeFrameIndex = null;
+            for (var timeframeKey in cluster.timeframes) {
+                if(cluster.timeframes[timeframeKey][0].getTime() == timeframe[0].getTime() && cluster.timeframes[timeframeKey][1].getTime() == timeframe[1].getTime()) {
+                    timeFrameIndex = timeframeKey;
+                    break;
                 }
             }
+            if(timeFrameIndex == null) {
+                timeframe[2] = modifier;
+//                            console.log("[new timeframe] boost " + cluster.name + " with " + name + " by " + timeframe[2] + " on " + timeframe[0]);
+                clusterList[key].timeframes.push(timeframe);
+                clusterList[key].timeframes.sort(function(a,b) {return (a[0] > b[0]) ? 1 : ((b[0] > a[0]) ? -1 : 0);} );
+            } else {
+//                            console.log("[existing timeframe] boost " + cluster.name + "("+cluster.timeframes[timeFrameIndex][2]+") with " + name + " by " + timeframe[2] + " on " + timeframe[0]);
+                cluster.timeframes[timeFrameIndex][2] += modifier;
+            }
+        }
         });
     });
     clusterList = clusterList.sort(function(a, b) {
@@ -119,36 +123,84 @@ var visualize = function visualize(interval, data) {
             }
         }
         if(found) {
-            clusterList[key]['training'] = clusterList[key].timeframes.slice(0,7);
-            var trainingPercentValue = 0;
-            for(var timeframeKey in clusterList[key]['training']) {
-                var timeframe = clusterList[key]['training'][timeframeKey];
-                trainingPercentValue += Math.round((timeframe[2]/timeframe[3])*10000)/100;
+            var windowSize = 3;
+            var trainingDataLength = 7;
+            var trainingWindowsCount = trainingDataLength - windowSize + 1;
+            var trainingWindowStart = 0;
+            clusterList[key]['training'] = 0;
+            for(i = trainingWindowStart; i <= trainingWindowsCount; i++) {
+                var start = i;
+                var end = i + windowSize;
+                var windowLength = end - start;
+                var currentWindow = clusterList[key].timeframes.slice(start,end);
+                var windowPercentValue = 0;
+                for(var timeframeKey in currentWindow) {
+                    var timeframe = currentWindow[timeframeKey];
+                    var timeframePercentValue = Math.round((timeframe[2]/timeframe[3])*10000)/100;
+                    windowPercentValue += (timeframePercentValue >= 1) ? timeframePercentValue : 0;
+                }
+                windowMeanPercentValue = windowPercentValue / windowLength;
+                clusterList[key]['training'] += windowMeanPercentValue;
+//                console.log(clusterList[key].name + " ("+start+","+end+") -> "+windowMeanPercentValue);
             }
-            clusterList[key]['trainingValue'] = trainingPercentValue/7;
+            clusterList[key]['training'] = clusterList[key]['training'] / trainingWindowsCount;
 
-            clusterList[key]['test'] = clusterList[key].timeframes.slice(7,10);
-            var testPercentValue = 0;
-            for(var timeframeKey in clusterList[key]['test']) {
-                var timeframe = clusterList[key]['test'][timeframeKey];
-                testPercentValue += Math.round((timeframe[2]/timeframe[3])*10000)/100;
+            var testDataLength = 5;
+            var testWindowsCount = testDataLength - windowSize + 1;
+            var testWindowStart = trainingWindowsCount;
+            clusterList[key]['test'] = 0;
+            var testWindowMaxDelta = 0;
+            clusterList[key]['anomaly.window'] = 0;
+            clusterList[key]['anomaly.window.size'] = windowSize;
+            for(i = testWindowStart; i <= clusterList[key].timeframes.length - windowSize; i++) {
+                var start = i;
+                var end = i + windowSize;
+                var windowLength = end - start;
+                var currentWindow = clusterList[key].timeframes.slice(start,end);
+                var windowPercentValue = 0;
+                for(var timeframeKey in currentWindow) {
+                    var timeframe = currentWindow[timeframeKey];
+                    var timeframePercentValue = Math.round((timeframe[2]/timeframe[3])*10000)/100;
+                    windowPercentValue += (timeframePercentValue >= 1) ? timeframePercentValue : 0;
+                }
+                windowMeanPercentValue = windowPercentValue / windowLength;
+                var windowDelta = Math.max(clusterList[key].training, windowMeanPercentValue) / Math.min(clusterList[key].training, windowMeanPercentValue);
+                if(windowDelta > testWindowMaxDelta) {
+                    clusterList[key]['anomaly.window'] = i;
+                    clusterList[key]['anomaly.window.delta'] = windowDelta;
+                    testWindowMaxDelta = windowDelta;
+                }
+                clusterList[key]['test'] += windowMeanPercentValue;
             }
-            clusterList[key]['testValue'] = testPercentValue/3;
+            clusterList[key]['test'] = clusterList[key]['test'] / testWindowsCount;
 
-            var delta = clusterList[key].trainingValue - clusterList[key].testValue;
-            var biggerValue = Math.max(clusterList[key].trainingValue, clusterList[key].testValue);
-            var smallerValue = Math.min(clusterList[key].trainingValue, clusterList[key].testValue);
+            var delta = clusterList[key].training - clusterList[key].test;
+            var biggerValue = Math.max(clusterList[key].training, clusterList[key].test);
+            var smallerValue = Math.min(clusterList[key].training, clusterList[key].test);
             if(smallerValue == 0) {
                 var relativeDelta = delta / 2;
             } else {
                 var relativeDelta = biggerValue / smallerValue;
             }
-            if(relativeDelta > 1.5 && Math.abs(delta) > 0.5) {
-                console.log(clusterList[key].name + ': ' + clusterList[key].trainingValue + ' vs ' + clusterList[key].testValue + " rel=" + relativeDelta);
+
+            if(relativeDelta > 2.5) {
+                console.log(clusterList[key].name + ': ' + clusterList[key].training + ' vs ' + clusterList[key].test + " rel=" + relativeDelta);
+                if(relativeDelta < 3) {
+                    clusterList[key].anomaly_level = 1;
+                } else if(relativeDelta < 3.5) {
+                    clusterList[key].anomaly_level = 2;
+                } else if(relativeDelta < 4) {
+                    clusterList[key].anomaly_level = 3;
+                } else if(relativeDelta < 4.5) {
+                    clusterList[key].anomaly_level = 4;
+                } else if(relativeDelta < 5) {
+                    clusterList[key].anomaly_level = 5;
+                } else {
+                    clusterList[key].anomaly_level = 6;
+                }
                 if(relativeDelta > mainAnomalyScore) {
                     mainAnomaly = clusterList[key].name;
                     mainAnomalyScore = relativeDelta;
-                    console.log("New anomaly candidate: " + mainAnomaly + ' with ' + mainAnomalyScore);
                 }
             }
             clusterList[key].timeframes = clusterTimeframes;
@@ -189,6 +241,16 @@ var visualize = function visualize(interval, data) {
         .call(xAxis);
 
     var c = d3.scale.category20c();
+
+    var g = stageSvg.append("g").attr("class", "journal");
+    g.append("rect")
+        .attr("y", 0)
+        .attr("x", xScale(timeframesData[7]['timeframe_start']) - 30)
+        .attr("class", "test-section")
+        .attr('width', xScale(timeframesData[9]['timeframe_start']) - xScale(timeframesData[7]['timeframe_start'])+60)
+        .attr('height', stageHeight)
+        .style("fill", 'rgb(150,10,128)')
+        .style('opacity', 0.03);
 
     for (var j = 0; j < data.length; j++) {
         var g = stageSvg.append("g").attr("class", "journal");
@@ -245,18 +307,46 @@ var visualize = function visualize(interval, data) {
             })
             .on("mouseover", mouseover)
             .on("mouseout", mouseout);
+
+        var anomalyLevel = data[j]['anomaly_level'];
+        if(anomalyLevel > 0) {
+            g.append("rect")
+                .attr("y", j * 30 + 8)
+                .attr("x", -30)
+                .attr("class", "anomaly-row")
+                .attr('width', stageWidth+60)
+                .attr('height', 25)
+                .style("fill", function (d) {
+                    return c(j);
+                })
+                .style('opacity', (anomalyLevel)*0.1)
+
+            g.append("rect")
+                .attr("y", 0)
+                .attr("x", xScale(timeframesData[data[j]['anomaly.window']]['timeframe_start']) - 30)
+                .attr("class", "anomaly-window")
+                .attr('width', xScale(timeframesData[data[j]['anomaly.window']+data[j]['anomaly.window.size']-1]['timeframe_start']) - xScale(timeframesData[data[j]['anomaly.window']]['timeframe_start'])+60)
+                .attr('height', stageHeight)
+                .style("fill", 'rgb(150,10,128)')
+                .style('opacity', 0.3)
+                .style('display','none');
+        }
     }
     ;
 
     function mouseover(p) {
         var g = d3.select(this).node().parentNode;
         d3.select(g).selectAll("circle").style("display", "none");
+        d3.select(g).selectAll(".anomaly-window").style("display", "block");
+//        d3.select(g).selectAll("rect").style("display", "none");
         d3.select(g).selectAll("text.value").style("display", "block");
     }
 
     function mouseout(p) {
         var g = d3.select(this).node().parentNode;
         d3.select(g).selectAll("circle").style("display", "block");
+        d3.select(g).selectAll(".anomaly-window").style("display", "none");
+//        d3.select(g).selectAll("rect").style("display", "block");
         d3.select(g).selectAll("text.value").style("display", "none");
     }
 };
