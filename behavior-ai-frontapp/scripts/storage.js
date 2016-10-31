@@ -85,7 +85,8 @@ function storageSearch(start_time, end_time, interval, path_limit, shard_size, t
             }
         }
     }).then(function (response) {
-        console.log(response);
+        console.log("Processing time:"+response.took);
+//        console.log(response);
         callback(interval, response);
     }, function (err) {
         console.trace(err.message);

@@ -150,6 +150,8 @@ var visualize = function visualize(interval, data) {
             var testWindowStart = trainingWindowsCount;
             clusterList[key]['test'] = 0;
             var testWindowMaxDelta = 0;
+            var testWindowMinDelta = 1000000;
+            var testBestWindowValue = 0;
             clusterList[key]['anomaly.window'] = 0;
             clusterList[key]['anomaly.window.size'] = windowSize;
             for(i = testWindowStart; i <= clusterList[key].timeframes.length - windowSize; i++) {
@@ -170,9 +172,16 @@ var visualize = function visualize(interval, data) {
                     clusterList[key]['anomaly.window.delta'] = windowDelta;
                     testWindowMaxDelta = windowDelta;
                 }
+                if(windowDelta < testWindowMinDelta) {
+//                    clusterList[key]['anomaly.window'] = i;
+//                    clusterList[key]['anomaly.window.delta'] = windowDelta;
+                    testWindowMinDelta = windowDelta;
+                    testBestWindowValue = windowMeanPercentValue;
+                }
                 clusterList[key]['test'] += windowMeanPercentValue;
             }
-            clusterList[key]['test'] = clusterList[key]['test'] / testWindowsCount;
+//            clusterList[key]['test'] = clusterList[key]['test'] / testWindowsCount;
+            clusterList[key]['test'] = testBestWindowValue;
 
             var delta = clusterList[key].training - clusterList[key].test;
             var biggerValue = Math.max(clusterList[key].training, clusterList[key].test);
@@ -184,7 +193,7 @@ var visualize = function visualize(interval, data) {
             }
 
             if(relativeDelta > 2.5) {
-                console.log(clusterList[key].name + ': ' + clusterList[key].training + ' vs ' + clusterList[key].test + " rel=" + relativeDelta);
+//                console.log(clusterList[key].name + ': ' + clusterList[key].training + ' vs ' + clusterList[key].test + " rel=" + relativeDelta);
                 if(relativeDelta < 3) {
                     clusterList[key].anomaly_level = 1;
                 } else if(relativeDelta < 3.5) {
@@ -207,8 +216,9 @@ var visualize = function visualize(interval, data) {
             data.push(clusterList[key]);
         }
     }
-    console.log("Main anomaly: " + mainAnomaly + ' with ' + mainAnomalyScore);
+//    console.log("Main anomaly: " + mainAnomaly + ' with ' + mainAnomalyScore);
     clusterList = null;
+    console.log("Number of clusters: "+data.length);
 
     var xMin = d3.min(data, function (cluster) {
         return d3.min(cluster['timeframes'], function (timeframe) {
