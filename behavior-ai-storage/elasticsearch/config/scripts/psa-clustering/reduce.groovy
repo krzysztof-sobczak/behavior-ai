@@ -1,5 +1,4 @@
 import groovy.transform.Memoized
-//import static groovyx.gpars.GParsPool.withPool
 
 // ------ MOCKS START
 if (!binding.variables.containsKey('path_limit')) {
@@ -334,7 +333,6 @@ class PSA {
         // go through PSA table
         for (Integer x in (1..seq1len)) {
             for (Integer y in (1..seq2len)) {
-//            println("[" + x + "," + y + "]")
                 def boolean sequenceMatching = (sequence1[x - 1] == sequence2[y - 1]);
                 def Integer horizontal = psaTable[x - 1][y];
                 def Integer vertical = psaTable[x][y - 1];
@@ -470,8 +468,6 @@ def mergeClustersWithSharding = { _clusters, _shardSize, _treshold ->
             return prev;
         };
         shardingTime = shardingTime + (System.currentTimeMillis() - startSharding);
-//        println(shards)
-//        def results = withPool(4) {
 
         // reduce shards (possible parallel)
         shards = shards.collect { it = mergeClusters(it, _treshold) }
@@ -484,7 +480,6 @@ def mergeClustersWithSharding = { _clusters, _shardSize, _treshold ->
             return prev;
         }
         shardingTime = shardingTime + (System.currentTimeMillis() - startSharding);
-//        println(results)
         mergePossible = (boolean) (results.size() < _clusters.size());
         // when finished merging in shards then try to merge on whole set
         if (!mergePossible && !extendShardToWholeSet) {
@@ -497,7 +492,6 @@ def mergeClustersWithSharding = { _clusters, _shardSize, _treshold ->
     return _clusters;
 }
 
-//println(clusters);
 initialSize = clusters.size();
 mergingWithShardingTime = System.currentTimeMillis()
 clusters = mergeClustersWithSharding(clusters, shard_size, treshold);
