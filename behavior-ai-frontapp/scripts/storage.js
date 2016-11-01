@@ -11,8 +11,6 @@ function storageInit() {
 
     storageClient.ping({
         requestTimeout: 30000,
-
-        // undocumented params are appended to the query string
         hello: "elasticsearch"
     }, function (error) {
         if (error) {

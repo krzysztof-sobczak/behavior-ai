@@ -59,6 +59,7 @@ var visualize = function visualize(interval, data) {
             }
         });
     });
+
     // fill clusters between timeframes
     data.forEach(function (timeframeData) {
         timeframeData['timeframe_start'] = new Date(timeframeData['key']);
@@ -88,16 +89,16 @@ var visualize = function visualize(interval, data) {
             }
             if(timeFrameIndex == null) {
                 timeframe[2] = modifier;
-//                            console.log("[new timeframe] boost " + cluster.name + " with " + name + " by " + timeframe[2] + " on " + timeframe[0]);
                 clusterList[key].timeframes.push(timeframe);
                 clusterList[key].timeframes.sort(function(a,b) {return (a[0] > b[0]) ? 1 : ((b[0] > a[0]) ? -1 : 0);} );
             } else {
-//                            console.log("[existing timeframe] boost " + cluster.name + "("+cluster.timeframes[timeFrameIndex][2]+") with " + name + " by " + timeframe[2] + " on " + timeframe[0]);
                 cluster.timeframes[timeFrameIndex][2] += modifier;
             }
         }
         });
     });
+
+    // sort clusters from biggest to smallest
     clusterList = clusterList.sort(function(a, b) {
         var aSum = a.timeframes.reduce( function(prev, next){
            return prev + next[2];
@@ -107,10 +108,13 @@ var visualize = function visualize(interval, data) {
         }, 0);
         return parseFloat(aSum) - parseFloat(bSum);
     });
+
+    // find anomalies
     data = [];
     var mainAnomaly = null;
     var mainAnomalyScore = 0;
     for (var key in clusterList) {
+        // exclude clusters including too small number of users
         if (!clusterList.hasOwnProperty(key)) continue;
         var clusterTimeframes = [];
         var found = false;
@@ -123,6 +127,7 @@ var visualize = function visualize(interval, data) {
             }
         }
         if(found) {
+            // Anomalies training section
             var windowSize = 3;
             var trainingDataLength = 7;
             var trainingWindowsCount = trainingDataLength - windowSize + 1;
@@ -141,10 +146,10 @@ var visualize = function visualize(interval, data) {
                 }
                 windowMeanPercentValue = windowPercentValue / windowLength;
                 clusterList[key]['training'] += windowMeanPercentValue;
-//                console.log(clusterList[key].name + " ("+start+","+end+") -> "+windowMeanPercentValue);
             }
             clusterList[key]['training'] = clusterList[key]['training'] / trainingWindowsCount;
 
+            // Anomalies testing section
             var testDataLength = 5;
             var testWindowsCount = testDataLength - windowSize + 1;
             var testWindowStart = trainingWindowsCount;
@@ -173,16 +178,14 @@ var visualize = function visualize(interval, data) {
                     testWindowMaxDelta = windowDelta;
                 }
                 if(windowDelta < testWindowMinDelta) {
-//                    clusterList[key]['anomaly.window'] = i;
-//                    clusterList[key]['anomaly.window.delta'] = windowDelta;
                     testWindowMinDelta = windowDelta;
                     testBestWindowValue = windowMeanPercentValue;
                 }
                 clusterList[key]['test'] += windowMeanPercentValue;
             }
-//            clusterList[key]['test'] = clusterList[key]['test'] / testWindowsCount;
             clusterList[key]['test'] = testBestWindowValue;
 
+            // Anomalies - calculating anomaly score
             var delta = clusterList[key].training - clusterList[key].test;
             var biggerValue = Math.max(clusterList[key].training, clusterList[key].test);
             var smallerValue = Math.min(clusterList[key].training, clusterList[key].test);
@@ -192,8 +195,8 @@ var visualize = function visualize(interval, data) {
                 var relativeDelta = biggerValue / smallerValue;
             }
 
+            // Anomalies - calculating anomaly level
             if(relativeDelta > 2.5) {
-//                console.log(clusterList[key].name + ': ' + clusterList[key].training + ' vs ' + clusterList[key].test + " rel=" + relativeDelta);
                 if(relativeDelta < 3) {
                     clusterList[key].anomaly_level = 1;
                 } else if(relativeDelta < 3.5) {
@@ -216,10 +219,10 @@ var visualize = function visualize(interval, data) {
             data.push(clusterList[key]);
         }
     }
-//    console.log("Main anomaly: " + mainAnomaly + ' with ' + mainAnomalyScore);
     clusterList = null;
     console.log("Number of clusters: "+data.length);
 
+    // Get time boundaries for parsed data
     var xMin = d3.min(data, function (cluster) {
         return d3.min(cluster['timeframes'], function (timeframe) {
             return timeframe[0];
@@ -230,9 +233,8 @@ var visualize = function visualize(interval, data) {
             return timeframe[0];
         });
     });
-//    console.log(xMin);
-//    console.log(xMax);
 
+    // Generate the visualization scene
     var xScale = d3.time.scale()
         .domain([xMin, xMax])
         .range([0, stageWidth]);
@@ -348,7 +350,6 @@ var visualize = function visualize(interval, data) {
         var g = d3.select(this).node().parentNode;
         d3.select(g).selectAll("circle").style("display", "none");
         d3.select(g).selectAll(".anomaly-window").style("display", "block");
-//        d3.select(g).selectAll("rect").style("display", "none");
         d3.select(g).selectAll("text.value").style("display", "block");
     }
 
@@ -356,7 +357,6 @@ var visualize = function visualize(interval, data) {
         var g = d3.select(this).node().parentNode;
         d3.select(g).selectAll("circle").style("display", "block");
         d3.select(g).selectAll(".anomaly-window").style("display", "none");
-//        d3.select(g).selectAll("rect").style("display", "block");
         d3.select(g).selectAll("text.value").style("display", "none");
     }
 };
