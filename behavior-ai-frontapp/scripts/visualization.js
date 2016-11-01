@@ -230,8 +230,8 @@ var visualize = function visualize(interval, data) {
             return timeframe[0];
         });
     });
-    console.log(xMin);
-    console.log(xMax);
+//    console.log(xMin);
+//    console.log(xMax);
 
     var xScale = d3.time.scale()
         .domain([xMin, xMax])

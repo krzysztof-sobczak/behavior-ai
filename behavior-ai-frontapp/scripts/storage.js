@@ -18,12 +18,15 @@ function storageInit() {
         if (error) {
             console.error('elasticsearch cluster is down!');
         } else {
-            console.log('All is well');
+            console.log('Storage client connected.');
         }
     });
 }
 
-function storageSearch(start_time, end_time, interval, path_limit, shard_size, treshold, callback) {
+function storageSearch(start_time, end_time, path_limit, shard_size, treshold, callback) {
+    var timeframesCount = 10;
+    var interval = (Date.parse(end_time) - Date.parse(start_time)) / 1000 / 60 / timeframesCount;
+    console.log('Performing analysis ...');
     storageClient.search({
         requestTimeout: 700000,
         index: 'logstash-*',
@@ -85,8 +88,9 @@ function storageSearch(start_time, end_time, interval, path_limit, shard_size, t
             }
         }
     }).then(function (response) {
-        console.log("Processing time:"+response.took);
+        console.log("Analysis took: "+response.took);
 //        console.log(response);
+        console.log('Processing analysis results ...');
         callback(interval, response);
     }, function (err) {
         console.trace(err.message);
