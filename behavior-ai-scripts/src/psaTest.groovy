@@ -17,18 +17,13 @@ class psaTest extends GroovyTestCase {
     @BeforeMethod
     public void setUp() throws Exception {
         compilerConfiguration = new CompilerConfiguration()
-//        this.compilerConfiguration.scriptBaseClass = DocumentBaseClassMock.class.name
         binding = new Binding()
     }
 
     @DataProvider
     public Object[][] createTestData() {
         List<Object[]> refdata = new ArrayList<>()
-//        refdata.add([["A","A","B","A","A","A","B","A","A","A","B","A"], ["A","C","C","B","C","A","A","C","C","B","C","A","A","C","C","B","C","A"], 6L])
-        refdata.add([["A","B"], ["A"], 6L])
-//        refdata.add([["A","A","B","A"], ["A","C","C","B","C","A"], 17L])
-//        refdata.add([["A","A","B","A"], ["A","A","B","A"], 100L])
-//        refdata.add([["A","B"], ["A","A","B","A"], 50L])
+        refdata.add([["A","A","B","A","A","A","B","A","A","A","B","A"], ["A","C","C","B","C","A","A","C","C","B","C","A","A","C","C","B","C","A"], 64L])
         return refdata
     }
 
@@ -37,7 +32,6 @@ class psaTest extends GroovyTestCase {
         // given
         binding.setVariable("sequence1", a)
         binding.setVariable("sequence2", b)
-//        binding.setVariable("doc", new MockDocument(42))
 
         // when
         evaluateScriptUnderTest(this.binding)
