@@ -1,4 +1,4 @@
-FROM kibana:latest
+FROM kibana:4
 
 RUN /opt/kibana/bin/kibana plugin --install elastic/sense/latest \
   && chown -R kibana:kibana /opt/kibana
