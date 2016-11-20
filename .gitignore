@@ -1,3 +1,4 @@
+behavior-ai-storage/elasticsearch/data
 behavior-ai-data/AWSLogs
 behavior-ai-data/opsworks_deployments_2015_08_24.json
 .idea
