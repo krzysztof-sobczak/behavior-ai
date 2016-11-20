@@ -376,7 +376,7 @@ class Cluster {
 
     private void updateRepresentant() {
         def representant = this.users.first()
-        def representantDistanceSum = Integer.MAX_VALUE;
+        def representantDistanceSum = 0;
         for (user1 in this.users) {
             def userDistanceSum = 0;
             for (user2 in this.users) {
