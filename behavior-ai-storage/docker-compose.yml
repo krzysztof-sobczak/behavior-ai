@@ -1,9 +1,9 @@
 elasticsearch:
-  image: elasticsearch
+  image: elasticsearch:2
   volumes:
     - ./elasticsearch/config:/usr/share/elasticsearch/config
     - ./elasticsearch/plugins:/usr/share/elasticsearch/plugins
-    - /data/elasticsearch/data:/usr/share/elasticsearch/data
+    - ./elasticsearch/data:/usr/share/elasticsearch/data
   ports:
     - 9200:9200
     - 9300:9300
