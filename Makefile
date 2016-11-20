@@ -1,6 +1,6 @@
 run-analysis: run-storage run-kibana run-frontapp
 
-stop-analysis: run-storage run-kibana run-frontapp
+stop-analysis: stop-storage stop-kibana stop-frontapp
 
 run: run-analysis run-collector
 
